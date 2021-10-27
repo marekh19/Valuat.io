@@ -1,1 +1,2 @@
 Django==3.2.8
+django_environ==0.8.1
