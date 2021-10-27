@@ -1,2 +1,4 @@
 Django==3.2.8
 django_environ==0.8.1
+environ==1.0
+yfinance==0.1.64
