@@ -10,9 +10,6 @@ def ticker_form(request):
         form = TickerForm(request.POST)
         if form.is_valid():
             ticker = form.cleaned_data['ticker']
-            print(yf.Ticker(ticker).earnings)
-            print(yf.Ticker(ticker).financials)
-            print(yf.Ticker(ticker).quarterly_financials)
-            print(yf.Ticker(ticker).quarterly_balance_sheet)
+            print(valuation_dictionary(ticker))
     form = TickerForm()
     return render(request, 'search.html', {'form': form})
