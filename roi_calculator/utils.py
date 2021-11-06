@@ -6,7 +6,6 @@ def valuation_dictionary(ticker):
     basic_info = yf.Ticker(ticker).info
     if basic_info['regularMarketPrice'] == None:
         return None
-
     # Data from yf balance_sheet method
     balance_sheet = yf.Ticker(ticker).balancesheet
     total_stockholders_equity = balance_sheet.loc['Total Stockholder Equity'][0]
@@ -18,6 +17,7 @@ def valuation_dictionary(ticker):
     pe_ratio = price_earnings_ratio(basic_info['regularMarketPrice'], eps)
     roe = return_on_equity(ytd_earnings, total_stockholders_equity)
     ticker_fundamentals = {
+        'name': basic_info['longName'],
         'symbol': basic_info['symbol'],
         'price': basic_info['regularMarketPrice'],
         'shares_outstanding': basic_info['sharesOutstanding'],
@@ -25,7 +25,8 @@ def valuation_dictionary(ticker):
         'ytd_earnings': ytd_earnings,
         'eps': eps,
         'pe_ratio': pe_ratio,
-        'roe': roe
+        'roe': roe,
+        'tse': total_stockholders_equity
     }
     return ticker_fundamentals
 
@@ -39,7 +40,7 @@ def earnings_per_share(quarterly_earnings, shares_outstanding):
 
 
 def price_earnings_ratio(price, eps):
-    return price / eps
+    return price / eps if price / eps <= 25 else 25
 
 
 def return_on_equity(earnings, equity):
