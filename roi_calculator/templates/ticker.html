@@ -17,39 +17,71 @@
     <main class="container">
         <div class="row">
             <div class="text-center">
-                <h1>{{ fundamentals.name }} Valuation</h1>
-                <table class="table mb-5">
-                    <tbody>
-                        <tr>
-                            <td>Ticker</td>
-                            <td>{{ fundamentals.symbol }}</td>
-                        </tr>
-                        <tr>
-                            <td>Last price</td>
-                            <td>{{ fundamentals.price }}</td>
-                        </tr>
-                        <tr>
-                            <td>P/E Ratio</td>
-                            <td>{{ fundamentals.pe_ratio }}</td>
-                        </tr>
-                        <tr>
-                            <td>ROE</td>
-                            <td>{{ fundamentals.roe }}</td>
-                        </tr>
-                        <tr>
-                            <td>Total Stockholders Equity</td>
-                            <td>{{ fundamentals.tse }}</td>
-                        </tr>
-                        <tr>
-                            <td>Shares Outstanding</td>
-                            <td>{{ fundamentals.shares_outstanding }}</td>
-                        </tr>
-                        <tr>
-                            <td>Dividend Payout Ratio</td>
-                            <td>{{ fundamentals.payout_ratio }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <h2 class="mb-3">{{ fundamentals.name }} Valuation</h2>
+                <div class="col">
+                    <table class="table mb-5">
+                        <tbody>
+                            <tr>
+                                <td>Ticker</td>
+                                <td>{{ fundamentals.symbol }}</td>
+                            </tr>
+                            <tr>
+                                <td>Last price</td>
+                                <td>{{ fundamentals.price }} {{ fundamentals.currency }}</td>
+                            </tr>
+                            <tr>
+                                <td>P/E Ratio</td>
+                                <td>{{ fundamentals.pe_ratio }}</td>
+                            </tr>
+                            <tr>
+                                <td>ROE</td>
+                                <td>{{ fundamentals.roe }}</td>
+                            </tr>
+                            <tr>
+                                <td>Total Stockholders Equity</td>
+                                <td>{{ fundamentals.tse }}</td>
+                            </tr>
+                            <tr>
+                                <td>Shares Outstanding</td>
+                                <td>{{ fundamentals.shares_outstanding }}</td>
+                            </tr>
+                            <tr>
+                                <td>Dividend Payout Ratio</td>
+                                <td>{{ fundamentals.payout_ratio }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Total Stockholders Equity per Share</td>
+                                <td>{{ roi.tseps }}</td>
+                            </tr>
+                            <tr>
+                                <td>Total dividend (after tax)</td>
+                                <td>{{ roi.total_dividend }}</td>
+                            </tr>
+                            <tr>
+                                <td>Expected price + dividends</td>
+                                <td>{{ roi.expected_price_including_dividends }}</td>
+                            </tr>
+                            <tr>
+                                <td>Expected return per share in 7 years</td>
+                                <td>{{ roi.expected_absolute_roi }}</td>
+                            </tr>
+                            <tr>
+                                <td>Expected % return per share in 7 years</td>
+                                <td>{{ roi.expected_percentage_roi }}</td>
+                            </tr>
+                            <tr>
+                                <td>Expected yearly return</td>
+                                <td>{{ roi.expected_yearly_return }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 <table class="table">
                     <thead>
                         <tr>
@@ -62,45 +94,45 @@
                     <tbody>
                         <tr>
                             <th scope="row">1<sup>st</sup> year</th>
-                            <td>X</td>
-                            <td>X</td>
-                            <td>X</td>
+                            <td>{{ 7yrs.1.0 }}</td>
+                            <td>{{ 7yrs.1.1 }}</td>
+                            <td>{{ 7yrs.1.2 }}</td>
                         </tr>
                         <tr>
                             <th scope="row">2<sup>nd</sup> year</th>
-                            <td>X</td>
-                            <td>X</td>
-                            <td>X</td>
+                            <td>{{ 7yrs.2.0 }}</td>
+                            <td>{{ 7yrs.2.1 }}</td>
+                            <td>{{ 7yrs.2.2 }}</td>
                         </tr>
                         <tr>
                             <th scope="row">3<sup>rd</sup> year</th>
-                            <td>X</td>
-                            <td>X</td>
-                            <td>X</td>
+                            <td>{{ 7yrs.3.0 }}</td>
+                            <td>{{ 7yrs.3.1 }}</td>
+                            <td>{{ 7yrs.3.2 }}</td>
                         </tr>
                         <tr>
                             <th scope="row">4<sup>th</sup> year</th>
-                            <td>X</td>
-                            <td>X</td>
-                            <td>X</td>
+                            <td>{{ 7yrs.4.0 }}</td>
+                            <td>{{ 7yrs.4.1 }}</td>
+                            <td>{{ 7yrs.4.2 }}</td>
                         </tr>
                         <tr>
                             <th scope="row">5<sup>th</sup> year</th>
-                            <td>X</td>
-                            <td>X</td>
-                            <td>X</td>
+                            <td>{{ 7yrs.5.0 }}</td>
+                            <td>{{ 7yrs.5.1 }}</td>
+                            <td>{{ 7yrs.5.2 }}</td>
                         </tr>
                         <tr>
                             <th scope="row">6<sup>th</sup> year</th>
-                            <td>X</td>
-                            <td>X</td>
-                            <td>X</td>
+                            <td>{{ 7yrs.6.0 }}</td>
+                            <td>{{ 7yrs.6.1 }}</td>
+                            <td>{{ 7yrs.6.2 }}</td>
                         </tr>
                         <tr>
                             <th scope="row">7<sup>th</sup> year</th>
-                            <td>X</td>
-                            <td>X</td>
-                            <td>X</td>
+                            <td>{{ 7yrs.7.0 }}</td>
+                            <td>{{ 7yrs.7.1 }}</td>
+                            <td>{{ 7yrs.7.2 }}</td>
                         </tr>
                     </tbody>
                 </table>
