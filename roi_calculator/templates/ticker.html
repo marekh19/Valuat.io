@@ -13,12 +13,13 @@
     <title>{{ fundamentals.symbol }} - 💸 Stock Valuation App</title>
 </head>
 
-<body class="d-flex justify-content-center align-items-center vh-100">
-    <main class="container">
-        <div class="row">
-            <div class="text-center">
-                <h2 class="mb-3">{{ fundamentals.name }} Valuation</h2>
-                <div class="col">
+<body class="d-flex justify-content-center align-items-center">
+    <main class="text-center mt-3">
+        <h2 class="mb-5">{{ fundamentals.name }} Valuation</h2>
+        <div class="container mb-5">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="mb-3">Stock info</h4>
                     <table class="table mb-5">
                         <tbody>
                             <tr>
@@ -52,7 +53,8 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="col">
+                <div class="col-md-6">
+                    <h4 class="mb-3">Expected return</h4>
                     <table class="table">
                         <tbody>
                             <tr>
@@ -82,10 +84,15 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <h4 class="mb-3">7 years overview</h4>
                 <table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
+                            <th scope="col">Year</th>
                             <th scope="col">TSE per Share</th>
                             <th scope="col">EPS</th>
                             <th scope="col">Dividend</th>

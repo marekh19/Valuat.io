@@ -1,5 +1,5 @@
 import yfinance as yf
-from .math_constants import THOUSAND as K, MILLION as M
+from .math_constants import THOUSAND as K, MILLION as M, HUNDRED as H
 
 
 def valuation_dictionary(ticker):
@@ -50,7 +50,7 @@ def price_earnings_ratio(price, eps):
 
 
 def return_on_equity(earnings, equity):
-    return (earnings / (equity * M)) * 100
+    return (earnings / (equity * M)) * H
 
 
 def total_stockholders_equity_per_share(tse, shares_outstanding):
@@ -60,44 +60,44 @@ def total_stockholders_equity_per_share(tse, shares_outstanding):
 def seven_yrs_overview(fundamentals):
     year1 = [
         fundamentals['tse_per_share'],
-        fundamentals['tse_per_share'] * fundamentals['roe'] / 100,
+        fundamentals['tse_per_share'] * fundamentals['roe'] / H,
         (fundamentals['tse_per_share'] * fundamentals['roe'] /
-         100) * fundamentals['payout_ratio']
+         H) * fundamentals['payout_ratio']
     ]
     year2 = [
         year1[0] + year1[1] - year1[2],
-        ((year1[0] + year1[1] - year1[2]) * fundamentals['roe']) / 100,
-        (((year1[0] + year1[1] - year1[2]) * fundamentals['roe']) / 100) *
+        ((year1[0] + year1[1] - year1[2]) * fundamentals['roe']) / H,
+        (((year1[0] + year1[1] - year1[2]) * fundamentals['roe']) / H) *
         fundamentals['payout_ratio'],
     ]
     year3 = [
         year2[0] + year2[1] - year2[2],
-        ((year2[0] + year2[1] - year2[2]) * fundamentals['roe']) / 100,
-        (((year2[0] + year2[1] - year2[2]) * fundamentals['roe']) / 100) *
+        ((year2[0] + year2[1] - year2[2]) * fundamentals['roe']) / H,
+        (((year2[0] + year2[1] - year2[2]) * fundamentals['roe']) / H) *
         fundamentals['payout_ratio'],
     ]
     year4 = [
         year3[0] + year3[1] - year3[2],
-        ((year3[0] + year3[1] - year3[2]) * fundamentals['roe']) / 100,
-        (((year3[0] + year3[1] - year3[2]) * fundamentals['roe']) / 100) *
+        ((year3[0] + year3[1] - year3[2]) * fundamentals['roe']) / H,
+        (((year3[0] + year3[1] - year3[2]) * fundamentals['roe']) / H) *
         fundamentals['payout_ratio'],
     ]
     year5 = [
         year4[0] + year4[1] - year4[2],
-        ((year4[0] + year4[1] - year4[2]) * fundamentals['roe']) / 100,
-        (((year4[0] + year4[1] - year4[2]) * fundamentals['roe']) / 100) *
+        ((year4[0] + year4[1] - year4[2]) * fundamentals['roe']) / H,
+        (((year4[0] + year4[1] - year4[2]) * fundamentals['roe']) / H) *
         fundamentals['payout_ratio'],
     ]
     year6 = [
         year5[0] + year5[1] - year5[2],
-        ((year5[0] + year5[1] - year5[2]) * fundamentals['roe']) / 100,
-        (((year5[0] + year5[1] - year5[2]) * fundamentals['roe']) / 100) *
+        ((year5[0] + year5[1] - year5[2]) * fundamentals['roe']) / H,
+        (((year5[0] + year5[1] - year5[2]) * fundamentals['roe']) / H) *
         fundamentals['payout_ratio'],
     ]
     year7 = [
         year6[0] + year6[1] - year6[2],
-        ((year6[0] + year6[1] - year6[2]) * fundamentals['roe']) / 100,
-        (((year6[0] + year6[1] - year6[2]) * fundamentals['roe']) / 100) *
+        ((year6[0] + year6[1] - year6[2]) * fundamentals['roe']) / H,
+        (((year6[0] + year6[1] - year6[2]) * fundamentals['roe']) / H) *
         fundamentals['payout_ratio'],
     ]
     return {
