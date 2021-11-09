@@ -1,5 +1,6 @@
 import yfinance as yf
 from .math_constants import THOUSAND as K, MILLION as M, HUNDRED as H
+import statistics
 
 
 def valuation_dictionary(ticker):
@@ -9,8 +10,12 @@ def valuation_dictionary(ticker):
         return None
     shares_outstanding_in_mil = basic_info['sharesOutstanding'] / M
     # Data from yf balance_sheet method
-    balance_sheet = yf.Ticker(ticker).quarterly_balancesheet
-    total_stockholders_equity_in_mil = balance_sheet.loc['Total Stockholder Equity'][0] / M
+    quarterly_balance_sheet = yf.Ticker(ticker).quarterly_balancesheet
+    balance_sheet = yf.Ticker(ticker).balancesheet
+    earnings = yf.Ticker(ticker).earnings
+    roe_4yrs_median = roe_4yrs_median(balance_sheet, earnings)
+    total_stockholders_equity_in_mil = quarterly_balance_sheet.loc[
+        'Total Stockholder Equity'][0] / M
     # Data from yf earnings method
     quarterly_earnings = yf.Ticker(ticker).quarterly_earnings
     ytd_earnings = year_to_date_earnings(quarterly_earnings)
@@ -61,44 +66,37 @@ def seven_yrs_overview(fundamentals):
     year1 = [
         fundamentals['tse_per_share'],
         fundamentals['tse_per_share'] * fundamentals['roe'] / H,
-        (fundamentals['tse_per_share'] * fundamentals['roe'] /
-         H) * fundamentals['payout_ratio']
+        (fundamentals['tse_per_share'] * fundamentals['roe'] / H) * fundamentals['payout_ratio']
     ]
     year2 = [
         year1[0] + year1[1] - year1[2],
         ((year1[0] + year1[1] - year1[2]) * fundamentals['roe']) / H,
-        (((year1[0] + year1[1] - year1[2]) * fundamentals['roe']) / H) *
-        fundamentals['payout_ratio'],
+        (((year1[0] + year1[1] - year1[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
     ]
     year3 = [
         year2[0] + year2[1] - year2[2],
         ((year2[0] + year2[1] - year2[2]) * fundamentals['roe']) / H,
-        (((year2[0] + year2[1] - year2[2]) * fundamentals['roe']) / H) *
-        fundamentals['payout_ratio'],
+        (((year2[0] + year2[1] - year2[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
     ]
     year4 = [
         year3[0] + year3[1] - year3[2],
         ((year3[0] + year3[1] - year3[2]) * fundamentals['roe']) / H,
-        (((year3[0] + year3[1] - year3[2]) * fundamentals['roe']) / H) *
-        fundamentals['payout_ratio'],
+        (((year3[0] + year3[1] - year3[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
     ]
     year5 = [
         year4[0] + year4[1] - year4[2],
         ((year4[0] + year4[1] - year4[2]) * fundamentals['roe']) / H,
-        (((year4[0] + year4[1] - year4[2]) * fundamentals['roe']) / H) *
-        fundamentals['payout_ratio'],
+        (((year4[0] + year4[1] - year4[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
     ]
     year6 = [
         year5[0] + year5[1] - year5[2],
         ((year5[0] + year5[1] - year5[2]) * fundamentals['roe']) / H,
-        (((year5[0] + year5[1] - year5[2]) * fundamentals['roe']) / H) *
-        fundamentals['payout_ratio'],
+        (((year5[0] + year5[1] - year5[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
     ]
     year7 = [
         year6[0] + year6[1] - year6[2],
         ((year6[0] + year6[1] - year6[2]) * fundamentals['roe']) / H,
-        (((year6[0] + year6[1] - year6[2]) * fundamentals['roe']) / H) *
-        fundamentals['payout_ratio'],
+        (((year6[0] + year6[1] - year6[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
     ]
     return {
         '1': year1,
@@ -122,8 +120,7 @@ def return_on_investment(fundamentals, overview):
     total_dividend = sum_of_dividends(overview)
     expected_price_including_dividends = (
         overview['7'][1] * fundamentals['pe_ratio']) + total_dividend
-    expected_percentage_roi = expected_price_including_dividends / \
-        fundamentals['price']
+    expected_percentage_roi = expected_price_including_dividends / fundamentals['price']
     expected_yearly_return = ((expected_percentage_roi + 1)**(1/7))-1
     return {
         'tseps': fundamentals['tse_per_share'],
@@ -133,3 +130,13 @@ def return_on_investment(fundamentals, overview):
         'expected_percentage_roi': expected_percentage_roi,
         'expected_yearly_return': expected_yearly_return
     }
+
+
+def roe_4yrs_median(balance_sheet, earnings):
+    tse_last_4yrs = balance_sheet.loc['Total Stockholder Equity'][:].tolist()[::-1]
+    earnings_last_4yrs = earnings['Earnings'].tolist()
+    roe_last_4yrs = []
+    for i in range(0, len(earnings_last_4yrs)):
+        roe_in_year = earnings_last_4yrs[i] / tse_last_4yrs[i]
+        roe_last_4yrs.append(roe_in_year)
+    return statistics.median(roe_last_4yrs) * H
