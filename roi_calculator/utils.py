@@ -1,14 +1,14 @@
 import yfinance as yf
 from .math_constants import THOUSAND as K, MILLION as M, HUNDRED as H
 import statistics
-import datetime
 
 
 def valuation_dictionary(ticker):
     # Data from yf info method
     ticker = yf.Ticker(ticker)
     basic_info = ticker.info
-    if basic_info['regularMarketPrice'] == None:
+    regularMarketPrice = basic_info['regularMarketPrice']
+    if regularMarketPrice == None:
         return None
     shares_outstanding_in_mil = basic_info['sharesOutstanding'] / M
     # Data from yf balance_sheet method
@@ -23,7 +23,7 @@ def valuation_dictionary(ticker):
     ytd_earnings = year_to_date_earnings(quarterly_earnings)
     eps = earnings_per_share(
         ytd_earnings, shares_outstanding_in_mil)
-    pe_ratio = price_earnings_ratio(basic_info['regularMarketPrice'], eps)
+    pe_ratio = price_earnings_ratio(regularMarketPrice, eps)
     roe = return_on_equity(ytd_earnings, total_stockholders_equity_in_mil)
     tse_per_share = total_stockholders_equity_per_share(
         total_stockholders_equity_in_mil, shares_outstanding_in_mil)
@@ -40,7 +40,7 @@ def valuation_dictionary(ticker):
     ticker_fundamentals = {
         'name': basic_info['longName'],
         'symbol': basic_info['symbol'],
-        'price': basic_info['regularMarketPrice'],
+        'price': regularMarketPrice,
         'currency': basic_info['currency'],
         'shares_outstanding': shares_outstanding_in_mil,
         'payout_ratio': basic_info['payoutRatio'],
@@ -73,6 +73,13 @@ def return_on_equity(earnings, equity):
 def total_stockholders_equity_per_share(tse, shares_outstanding):
     return float(tse / shares_outstanding)
 
+def compute_year(previous_year, fundamentals):
+    result = [
+        previous_year[0] + previous_year[1] - previous_year[2],
+        ((previous_year[0] + previous_year[1] - previous_year[2]) * fundamentals['roe']) / H,
+        (((previous_year[0] + previous_year[1] - previous_year[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
+    ]
+    return result
 
 def seven_yrs_overview(fundamentals):
     year1 = [
@@ -80,36 +87,13 @@ def seven_yrs_overview(fundamentals):
         fundamentals['tse_per_share'] * fundamentals['roe'] / H,
         (fundamentals['tse_per_share'] * fundamentals['roe'] / H) * fundamentals['payout_ratio']
     ]
-    year2 = [
-        year1[0] + year1[1] - year1[2],
-        ((year1[0] + year1[1] - year1[2]) * fundamentals['roe']) / H,
-        (((year1[0] + year1[1] - year1[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
-    ]
-    year3 = [
-        year2[0] + year2[1] - year2[2],
-        ((year2[0] + year2[1] - year2[2]) * fundamentals['roe']) / H,
-        (((year2[0] + year2[1] - year2[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
-    ]
-    year4 = [
-        year3[0] + year3[1] - year3[2],
-        ((year3[0] + year3[1] - year3[2]) * fundamentals['roe']) / H,
-        (((year3[0] + year3[1] - year3[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
-    ]
-    year5 = [
-        year4[0] + year4[1] - year4[2],
-        ((year4[0] + year4[1] - year4[2]) * fundamentals['roe']) / H,
-        (((year4[0] + year4[1] - year4[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
-    ]
-    year6 = [
-        year5[0] + year5[1] - year5[2],
-        ((year5[0] + year5[1] - year5[2]) * fundamentals['roe']) / H,
-        (((year5[0] + year5[1] - year5[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
-    ]
-    year7 = [
-        year6[0] + year6[1] - year6[2],
-        ((year6[0] + year6[1] - year6[2]) * fundamentals['roe']) / H,
-        (((year6[0] + year6[1] - year6[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
-    ]
+    year2 = compute_year(year1, fundamentals)
+    year3 = compute_year(year2, fundamentals)
+    year4 = compute_year(year3, fundamentals)
+    year5 = compute_year(year4, fundamentals)
+    year6 = compute_year(year5, fundamentals)
+    year7 = compute_year(year6, fundamentals)
+
     return {
         '1': year1,
         '2': year2,
