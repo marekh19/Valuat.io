@@ -1,23 +1,25 @@
 import yfinance as yf
 from .math_constants import THOUSAND as K, MILLION as M, HUNDRED as H
 import statistics
+import datetime
 
 
 def valuation_dictionary(ticker):
     # Data from yf info method
-    basic_info = yf.Ticker(ticker).info
+    ticker = yf.Ticker(ticker)
+    basic_info = ticker.info
     if basic_info['regularMarketPrice'] == None:
         return None
     shares_outstanding_in_mil = basic_info['sharesOutstanding'] / M
     # Data from yf balance_sheet method
-    quarterly_balance_sheet = yf.Ticker(ticker).quarterly_balancesheet
-    balance_sheet = yf.Ticker(ticker).balancesheet
-    earnings = yf.Ticker(ticker).earnings
-    roe_4yrs_median = roe_4yrs_median(balance_sheet, earnings)
+    quarterly_balance_sheet = ticker.quarterly_balancesheet
+    balance_sheet = ticker.balancesheet
+    earnings = ticker.earnings
+    roe_4yrs_median = return_on_equity_4yrs_median(balance_sheet, earnings)
     total_stockholders_equity_in_mil = quarterly_balance_sheet.loc[
         'Total Stockholder Equity'][0] / M
     # Data from yf earnings method
-    quarterly_earnings = yf.Ticker(ticker).quarterly_earnings
+    quarterly_earnings = ticker.quarterly_earnings
     ytd_earnings = year_to_date_earnings(quarterly_earnings)
     eps = earnings_per_share(
         ytd_earnings, shares_outstanding_in_mil)
@@ -25,6 +27,16 @@ def valuation_dictionary(ticker):
     roe = return_on_equity(ytd_earnings, total_stockholders_equity_in_mil)
     tse_per_share = total_stockholders_equity_per_share(
         total_stockholders_equity_in_mil, shares_outstanding_in_mil)
+    # TEMP START
+    splits = ticker.splits.to_dict().items()
+    for split in splits:
+        year = split[0].to_pydatetime().year
+        print(year)
+        coeficient = split[1]
+        print(coeficient)
+    # earnings_dict = earnings['Earnings'].to_dict()
+    # print(earnings_dict)
+    # TEMP END
     ticker_fundamentals = {
         'name': basic_info['longName'],
         'symbol': basic_info['symbol'],
@@ -37,7 +49,7 @@ def valuation_dictionary(ticker):
         'pe_ratio': pe_ratio,
         'roe': roe,
         'tse': total_stockholders_equity_in_mil,
-        'tse_per_share': tse_per_share
+        'tse_per_share': tse_per_share,
     }
     return ticker_fundamentals
 
@@ -59,12 +71,12 @@ def return_on_equity(earnings, equity):
 
 
 def total_stockholders_equity_per_share(tse, shares_outstanding):
-    return tse / shares_outstanding
+    return float(tse / shares_outstanding)
 
 
 def seven_yrs_overview(fundamentals):
     year1 = [
-        fundamentals['tse_per_share'],
+        fundamentals['tse_per_share'] * 1,
         fundamentals['tse_per_share'] * fundamentals['roe'] / H,
         (fundamentals['tse_per_share'] * fundamentals['roe'] / H) * fundamentals['payout_ratio']
     ]
@@ -132,7 +144,7 @@ def return_on_investment(fundamentals, overview):
     }
 
 
-def roe_4yrs_median(balance_sheet, earnings):
+def return_on_equity_4yrs_median(balance_sheet, earnings):
     tse_last_4yrs = balance_sheet.loc['Total Stockholder Equity'][:].tolist()[::-1]
     earnings_last_4yrs = earnings['Earnings'].tolist()
     roe_last_4yrs = []
@@ -140,3 +152,7 @@ def roe_4yrs_median(balance_sheet, earnings):
         roe_in_year = earnings_last_4yrs[i] / tse_last_4yrs[i]
         roe_last_4yrs.append(roe_in_year)
     return statistics.median(roe_last_4yrs) * H
+
+
+def pe_ratio_4_yrs_median():
+    yield 0
