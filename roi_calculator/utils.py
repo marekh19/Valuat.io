@@ -1,6 +1,7 @@
 import yfinance as yf
 from .math_constants import THOUSAND as K, MILLION as M, HUNDRED as H
 import statistics
+from datetime import datetime
 
 
 def valuation_dictionary(ticker):
@@ -21,21 +22,48 @@ def valuation_dictionary(ticker):
     # Data from yf earnings method
     quarterly_earnings = ticker.quarterly_earnings
     ytd_earnings = year_to_date_earnings(quarterly_earnings)
-    eps = earnings_per_share(
-        ytd_earnings, shares_outstanding_in_mil)
+    eps = earnings_per_share(ytd_earnings, shares_outstanding_in_mil)
     pe_ratio = price_earnings_ratio(regularMarketPrice, eps)
     roe = return_on_equity(ytd_earnings, total_stockholders_equity_in_mil)
-    tse_per_share = total_stockholders_equity_per_share(
-        total_stockholders_equity_in_mil, shares_outstanding_in_mil)
+    tse_per_share = total_stockholders_equity_per_share(total_stockholders_equity_in_mil, shares_outstanding_in_mil)
+    
     # TEMP START
+    earnings_dict = earnings['Earnings'].to_dict()
+
+    last_4_fiscal_yrs = (list(earnings_dict.keys()))[::-1]
+    print('last fiscal 4 yrs:')
+    print(last_4_fiscal_yrs)
+
     splits = ticker.splits.to_dict().items()
+    split_list = [[2018, 2.0]]
     for split in splits:
         year = split[0].to_pydatetime().year
-        print(year)
         coeficient = split[1]
-        print(coeficient)
-    # earnings_dict = earnings['Earnings'].to_dict()
-    # print(earnings_dict)
+        if year >= last_4_fiscal_yrs[-1]:
+            split_list.append([year, coeficient])
+    # if len(split_list) > 1:
+    #     for i in range(1, len(split_list)):
+    #         split_list[i][1] *= split_list[i-1][1]
+    split_list = split_list[::-1]
+    print(split_list)
+    
+    shares_outstanding_last_4_yrs = [[last_4_fiscal_yrs[0], shares_outstanding_in_mil]]
+    
+    for year in last_4_fiscal_yrs:
+        for split_event in split_list:
+            if year in split_event and year not in shares_outstanding_last_4_yrs[-1]:
+                shares_outstanding_last_4_yrs.append([year, shares_outstanding_last_4_yrs[-1][1] / split_event[1]])
+            if year not in split_event and year not in shares_outstanding_last_4_yrs[-1]:
+                shares_outstanding_last_4_yrs.append([year, shares_outstanding_last_4_yrs[-1][1]])
+
+    print('shares outstanding history:')
+    print(shares_outstanding_last_4_yrs)
+
+
+    # for i in range(0,len(last_4_fiscal_yrs)):
+        
+
+
     # TEMP END
     ticker_fundamentals = {
         'name': basic_info['longName'],
@@ -73,17 +101,19 @@ def return_on_equity(earnings, equity):
 def total_stockholders_equity_per_share(tse, shares_outstanding):
     return float(tse / shares_outstanding)
 
+
 def compute_year(previous_year, fundamentals):
-    result = [
+    return [
         previous_year[0] + previous_year[1] - previous_year[2],
         ((previous_year[0] + previous_year[1] - previous_year[2]) * fundamentals['roe']) / H,
-        (((previous_year[0] + previous_year[1] - previous_year[2]) * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
+        (((previous_year[0] + previous_year[1] - previous_year[2])
+         * fundamentals['roe']) / H) * fundamentals['payout_ratio'],
     ]
-    return result
+
 
 def seven_yrs_overview(fundamentals):
     year1 = [
-        fundamentals['tse_per_share'] * 1,
+        fundamentals['tse_per_share'],
         fundamentals['tse_per_share'] * fundamentals['roe'] / H,
         (fundamentals['tse_per_share'] * fundamentals['roe'] / H) * fundamentals['payout_ratio']
     ]
