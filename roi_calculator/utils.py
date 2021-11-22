@@ -7,11 +7,12 @@ from datetime import datetime
 def valuation_dictionary(ticker):
     # Data from yf info method
     ticker = yf.Ticker(ticker)
+    print(ticker.history(period="max"))
     basic_info = ticker.info
     regularMarketPrice = basic_info['regularMarketPrice']
     if regularMarketPrice == None:
         return None
-    shares_outstanding_in_mil = basic_info['sharesOutstanding'] / M
+    current_shares_outstanding_in_mil = basic_info['sharesOutstanding'] / M
     # Data from yf balance_sheet method
     quarterly_balance_sheet = ticker.quarterly_balancesheet
     balance_sheet = ticker.balancesheet
@@ -22,55 +23,19 @@ def valuation_dictionary(ticker):
     # Data from yf earnings method
     quarterly_earnings = ticker.quarterly_earnings
     ytd_earnings = year_to_date_earnings(quarterly_earnings)
-    eps = earnings_per_share(ytd_earnings, shares_outstanding_in_mil)
+    eps = earnings_per_share(ytd_earnings, current_shares_outstanding_in_mil)
     pe_ratio = price_earnings_ratio(regularMarketPrice, eps)
     roe = return_on_equity(ytd_earnings, total_stockholders_equity_in_mil)
-    tse_per_share = total_stockholders_equity_per_share(total_stockholders_equity_in_mil, shares_outstanding_in_mil)
-    
-    # TEMP START
-    earnings_dict = earnings['Earnings'].to_dict()
+    tse_per_share = total_stockholders_equity_per_share(total_stockholders_equity_in_mil, current_shares_outstanding_in_mil)
 
-    last_4_fiscal_yrs = (list(earnings_dict.keys()))[::-1]
-    print('last fiscal 4 yrs:')
-    print(last_4_fiscal_yrs)
+    print(earnings_per_share_last_4_yrs(ticker, current_shares_outstanding_in_mil))
 
-    splits = ticker.splits.to_dict().items()
-    split_list = [[2018, 2.0]]
-    for split in splits:
-        year = split[0].to_pydatetime().year
-        coeficient = split[1]
-        if year >= last_4_fiscal_yrs[-1]:
-            split_list.append([year, coeficient])
-    # if len(split_list) > 1:
-    #     for i in range(1, len(split_list)):
-    #         split_list[i][1] *= split_list[i-1][1]
-    split_list = split_list[::-1]
-    print(split_list)
-    
-    shares_outstanding_last_4_yrs = [[last_4_fiscal_yrs[0], shares_outstanding_in_mil]]
-    
-    for year in last_4_fiscal_yrs:
-        for split_event in split_list:
-            if year in split_event and year not in shares_outstanding_last_4_yrs[-1]:
-                shares_outstanding_last_4_yrs.append([year, shares_outstanding_last_4_yrs[-1][1] / split_event[1]])
-            if year not in split_event and year not in shares_outstanding_last_4_yrs[-1]:
-                shares_outstanding_last_4_yrs.append([year, shares_outstanding_last_4_yrs[-1][1]])
-
-    print('shares outstanding history:')
-    print(shares_outstanding_last_4_yrs)
-
-
-    # for i in range(0,len(last_4_fiscal_yrs)):
-        
-
-
-    # TEMP END
     ticker_fundamentals = {
         'name': basic_info['longName'],
         'symbol': basic_info['symbol'],
         'price': regularMarketPrice,
         'currency': basic_info['currency'],
-        'shares_outstanding': shares_outstanding_in_mil,
+        'shares_outstanding': current_shares_outstanding_in_mil,
         'payout_ratio': basic_info['payoutRatio'],
         'ytd_earnings': ytd_earnings,
         'eps': eps,
@@ -166,6 +131,38 @@ def return_on_equity_4yrs_median(balance_sheet, earnings):
         roe_in_year = earnings_last_4yrs[i] / tse_last_4yrs[i]
         roe_last_4yrs.append(roe_in_year)
     return statistics.median(roe_last_4yrs) * H
+
+
+def earnings_per_share_last_4_yrs(ticker, shares_outstanding):
+    earnings_dict = ticker.earnings['Earnings'].to_dict()
+    last_4_fiscal_yrs = (list(earnings_dict.keys()))[::-1]
+
+    split_dict = {}
+    splits = ticker.splits.to_dict().items()
+    for split in splits:
+        year = split[0].to_pydatetime().year
+        coeficient = split[1]
+        if year >= last_4_fiscal_yrs[-1]:
+            split_dict[year] = coeficient
+
+    # If there was split this year but this year is not closed fiscal year yet
+    if datetime.now().year in split_dict.keys() and datetime.now().year not in last_4_fiscal_yrs:
+        shares_outstanding_last_4_yrs = {last_4_fiscal_yrs[0]: shares_outstanding / split_dict[datetime.now().year]}
+    else:
+        shares_outstanding_last_4_yrs = {last_4_fiscal_yrs[0]: shares_outstanding}
+
+    for year in last_4_fiscal_yrs:
+        if year not in shares_outstanding_last_4_yrs.keys():
+            if year + 1 in split_dict.keys():
+                shares_outstanding_last_4_yrs[year] = shares_outstanding_last_4_yrs[year + 1] / split_dict[year + 1]
+            if year + 1 not in split_dict.keys():
+                shares_outstanding_last_4_yrs[year] = shares_outstanding_last_4_yrs[year + 1]
+
+    eps_last_4_yrs = {}
+    for year in last_4_fiscal_yrs:
+        eps_last_4_yrs[year] = (earnings_dict[year] / shares_outstanding_last_4_yrs[year]) / M
+
+    return eps_last_4_yrs
 
 
 def pe_ratio_4_yrs_median():
