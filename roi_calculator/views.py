@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .forms import TickerForm
+from .forms import TickerForm, TickerFormSmall
 from .utils import valuation_dictionary, seven_yrs_overview, return_on_investment
 
 
@@ -16,12 +16,20 @@ def ticker_form(request):
 
 
 def ticker_view(request, ticker):
-    fundamentals = valuation_dictionary(ticker)
-    overview = seven_yrs_overview(fundamentals)
-    roi = return_on_investment(fundamentals, overview)
-    context = {
-        'fundamentals': fundamentals,
-        '7yrs': overview,
-        'roi': roi
-    }
-    return render(request, 'ticker.html', context)
+    if request.method == 'GET':
+        fundamentals = valuation_dictionary(ticker)
+        overview = seven_yrs_overview(fundamentals)
+        roi = return_on_investment(fundamentals, overview)
+        form = TickerFormSmall()
+        context = {
+            'fundamentals': fundamentals,
+            '7yrs': overview,
+            'roi': roi,
+            'form': form,
+        }
+        return render(request, 'ticker.html', context)
+    if request.method == 'POST':
+        form = TickerFormSmall(request.POST)
+        if form.is_valid():
+            ticker = form.cleaned_data['ticker'].upper()
+        return redirect('/' + ticker + '/')
