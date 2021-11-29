@@ -12,6 +12,7 @@
 
     <title>{{ fundamentals.symbol }} - Valuat.io</title>
 </head>
+{% autoescape on %}
 
 <body class="d-flex justify-content-center align-items-center">
     {% load template_filters %}
@@ -25,32 +26,54 @@
                         <tbody>
                             <tr>
                                 <td>Ticker</td>
-                                <td>{{ fundamentals.symbol }}</td>
+                                <td class="text-end">{{ fundamentals.symbol }}</td>
                             </tr>
                             <tr>
                                 <td>Last price</td>
-                                <td>{{ fundamentals.price | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                <td class="text-end">{{ fundamentals.price | floatformat:2 }}
+                                    {{ fundamentals.currency }}</td>
                             </tr>
                             <tr>
-                                <td>P/E Ratio</td>
-                                <td>{{ fundamentals.pe_ratio | floatformat:2 }}</td>
+                                <td>P/E Ratio current</td>
+                                <td class="text-end">{{ fundamentals.pe_ratio | floatformat:2 }}</td>
                             </tr>
                             <tr>
-                                <td>ROE</td>
-                                <td>{{ fundamentals.roe | floatformat:2 }} %</td>
+                                <td>P/E Ratio 4 yrs median</td>
+                                <td class="text-end">
+                                    {% comment %} {% if fundamentals.pe_ratio_median == 25 %}
+                                    <span class="text-danger">Over 25!</span>
+                                    {% else %} {% endcomment %}
+                                    {{ fundamentals.pe_ratio_median | floatformat:2 }}
+                                    {% comment %} {% endif %} {% endcomment %}
+                                </td>
                             </tr>
+
+                            <tr>
+                                <td>ROE current</td>
+                                <td class="text-end">{{ fundamentals.roe | floatformat:2 }} %</td>
+                            </tr>
+                            <tr>
+                                <td>ROE current</td>
+                                <td class="text-end">{{ fundamentals.roe_median | floatformat:2 }} %</td>
+                            </tr>
+
                             <tr>
                                 <td>Total Stockholders Equity</td>
-                                <td>{{ fundamentals.tse | floatformat:0 }} mil.</td>
+                                <td class="text-end">{{ fundamentals.tse | floatformat:0 }} mil.</td>
                             </tr>
                             <tr>
                                 <td>Shares Outstanding</td>
-                                <td>{{ fundamentals.shares_outstanding | floatformat:0 }} mil.</td>
+                                <td class="text-end">{{ fundamentals.shares_outstanding | floatformat:0 }} mil.</td>
                             </tr>
                             <tr>
-                                <td>Dividend Payout Ratio</td>
-                                <td>{{ fundamentals.payout_ratio | floatformat:2 }}</td>
+                                <td>Dividend Payout Ratio current</td>
+                                <td class="text-end">{{ fundamentals.payout_ratio | floatformat:2 }}</td>
                             </tr>
+                            <tr>
+                                <td>Dividend Payout Ratio 4 yrs median</td>
+                                <td class="text-end">{{ fundamentals.payout_ratio_median | floatformat:2 }}</td>
+                            </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -60,28 +83,30 @@
                         <tbody>
                             <tr>
                                 <td>Total Stockholders Equity per Share</td>
-                                <td>{{ roi.tseps | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                <td class="text-end">{{ roi.tseps | floatformat:2 }} {{ fundamentals.currency }}</td>
                             </tr>
                             <tr>
                                 <td>Total dividend (after tax)</td>
-                                <td>{{ roi.total_dividend | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                <td class="text-end">{{ roi.total_dividend | floatformat:2 }}
+                                    {{ fundamentals.currency }}</td>
                             </tr>
                             <tr>
                                 <td>Expected price + dividends</td>
-                                <td>{{ roi.expected_price_including_dividends | floatformat:2 }}
+                                <td class="text-end">{{ roi.expected_price_including_dividends | floatformat:2 }}
                                     {{ fundamentals.currency }}</td>
                             </tr>
                             <tr>
                                 <td>Expected return per share in 7 years</td>
-                                <td>{{ roi.expected_absolute_roi | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                <td class="text-end">{{ roi.expected_absolute_roi | floatformat:2 }}
+                                    {{ fundamentals.currency }}</td>
                             </tr>
                             <tr>
                                 <td>Expected % return per share in 7 years</td>
-                                <td>{{ roi.expected_percentage_roi | percentage}}</td>
+                                <td class="text-end">{{ roi.expected_percentage_roi | percentage}}</td>
                             </tr>
                             <tr>
                                 <td>Expected yearly return</td>
-                                <td>{{ roi.expected_yearly_return | percentage }}</td>
+                                <td class="text-end">{{ roi.expected_yearly_return | percentage }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -90,61 +115,76 @@
         </div>
         <div class="container">
             <div class="row">
-                <h4 class="mb-3">7 years overview</h4>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Year</th>
-                            <th scope="col">TSE per Share</th>
-                            <th scope="col">EPS</th>
-                            <th scope="col">Dividend</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">1<sup>st</sup> year</th>
-                            <td>{{ 7yrs.1.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.1.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.1.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2<sup>nd</sup> year</th>
-                            <td>{{ 7yrs.2.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.2.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.2.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3<sup>rd</sup> year</th>
-                            <td>{{ 7yrs.3.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.3.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.3.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">4<sup>th</sup> year</th>
-                            <td>{{ 7yrs.4.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.4.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.4.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">5<sup>th</sup> year</th>
-                            <td>{{ 7yrs.5.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.5.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.5.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">6<sup>th</sup> year</th>
-                            <td>{{ 7yrs.6.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.6.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.6.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">7<sup>th</sup> year</th>
-                            <td>{{ 7yrs.7.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.7.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                            <td>{{ 7yrs.7.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="accordion mb-3" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseOne" aria-expanded="false"
+                                aria-controls="panelsStayOpen-collapseOne">
+                                7 years overview
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                            data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Year</th>
+                                            <th scope="col">TSE per Share</th>
+                                            <th scope="col">EPS</th>
+                                            <th scope="col">Dividend</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">1<sup>st</sup> year</th>
+                                            <td>{{ 7yrs.1.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.1.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.1.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">2<sup>nd</sup> year</th>
+                                            <td>{{ 7yrs.2.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.2.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.2.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">3<sup>rd</sup> year</th>
+                                            <td>{{ 7yrs.3.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.3.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.3.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">4<sup>th</sup> year</th>
+                                            <td>{{ 7yrs.4.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.4.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.4.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">5<sup>th</sup> year</th>
+                                            <td>{{ 7yrs.5.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.5.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.5.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">6<sup>th</sup> year</th>
+                                            <td>{{ 7yrs.6.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.6.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.6.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">7<sup>th</sup> year</th>
+                                            <td>{{ 7yrs.7.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.7.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                            <td>{{ 7yrs.7.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -154,5 +194,6 @@
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
     </script>
 </body>
+{% endautoescape %}
 
 </html>
