@@ -8,8 +8,8 @@ def valuation_dictionary(ticker):
     ticker = yf.Ticker(ticker)
     # BASIC INFO
     info = ticker.info
-    market_price = info['regularMarketPrice']
     current_shares_outstanding_in_mil = info['sharesOutstanding'] / M
+    market_price = info['regularMarketPrice']
     # BALANCE SHEET
     balance_sheet = ticker.balancesheet
     quarterly_balance_sheet = ticker.quarterly_balancesheet
@@ -35,21 +35,35 @@ def valuation_dictionary(ticker):
         ticker, last_4_fiscal_yrs, earnings_dict, current_shares_outstanding_in_mil)
 
     ticker_fundamentals = {
+        # basics
         'name': info['longName'],
         'symbol': info['symbol'],
         'price': market_price,
         'currency': info['currency'],
+        'market_cap': info['marketCap'] / M,
         'shares_outstanding': current_shares_outstanding_in_mil,
-        'payout_ratio': info['payoutRatio'],
-        'payout_ratio_median': payout_ratio_4_yrs_median,
+        # ratios, earnings, roe
+        'peg_ratio': info['pegRatio'],
+        'pfcf_ratio': info['marketCap'] / info['freeCashflow'],
+        'ps_ratio': info['priceToSalesTrailing12Months'],
+        'pb_ratio': info['priceToBook'],
         'ytd_earnings': earnings_last_4_quarters_sum,
         'eps': current_eps,
         'pe_ratio': current_pe_ratio,
         'pe_ratio_median': pe_ratio_4_yrs_median,
         'roe': current_roe,
         'roe_median': roe_4_yrs_median,
+        'debt_to_equity': info['debtToEquity'] / H,
+        'quick_ratio': info['quickRatio'],
+        'current_ratio': info['currentRatio'],
         'tse': total_stockholders_equity_in_mil,
         'tse_per_share': tse_per_share,
+        # dividends
+        'dividend_yield': info['dividendYield'] * H,
+        'dividend_value': info['lastDividendValue'],
+        'payout_ratio': info['payoutRatio'],
+        'payout_ratio_median': payout_ratio_4_yrs_median,
+
     }
     return ticker_fundamentals
 
