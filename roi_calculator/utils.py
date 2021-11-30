@@ -42,6 +42,8 @@ def valuation_dictionary(ticker):
         'currency': info['currency'],
         'market_cap': info['marketCap'] / M,
         'shares_outstanding': current_shares_outstanding_in_mil,
+        'logo': info['logo_url'],
+        'data_saved_on': datetime.now(),
         # ratios, earnings, roe
         'peg_ratio': info['pegRatio'],
         'pfcf_ratio': info['marketCap'] / info['freeCashflow'] if info['freeCashflow'] != None else None,
