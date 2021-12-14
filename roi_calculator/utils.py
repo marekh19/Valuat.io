@@ -33,7 +33,7 @@ def valuation_dictionary(ticker):
     pe_ratio_4_yrs_median = price_earnings_ratio_4_yrs_median(ticker, last_4_fiscal_yrs, eps_last_4_yrs)
     payout_ratio_4_yrs_median = dividend_payout_ratio_4_yrs_median(
         ticker, last_4_fiscal_yrs, earnings_dict, current_shares_outstanding_in_mil)
-
+    # print(info)
     ticker_fundamentals = {
         # basics
         'name': info['longName'],
@@ -41,8 +41,10 @@ def valuation_dictionary(ticker):
         'price': market_price,
         'currency': info['currency'],
         'market_cap': info['marketCap'] / M,
+        'market_cap_original': info['marketCap'],
         'shares_outstanding': current_shares_outstanding_in_mil,
-        'logo': info['logo_url'],
+        'country': info['country'],
+        'description': info['longBusinessSummary'],
         'data_saved_on': datetime.now(),
         # ratios, earnings, roe
         'peg_ratio': info['pegRatio'],
@@ -65,7 +67,7 @@ def valuation_dictionary(ticker):
         'dividend_value': info['lastDividendValue'],
         'payout_ratio': info['payoutRatio'],
         'payout_ratio_median': payout_ratio_4_yrs_median,
-
+        'ex_divi_date': info['exDividendDate'],
     }
     return ticker_fundamentals
 

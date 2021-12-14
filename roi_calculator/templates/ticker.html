@@ -16,128 +16,207 @@
 
 <body>
     {% load template_filters %}
+    {% load humanize %}
+    {% comment %} NAV START {% endcomment %}
     <div class="container-fluid bg-dark">
-        <nav class="navbar navbar-dark bg-dark justify-content-between">
-            <a class="navbar-brand" href="/">Valuat.io</a>
-            <form class="form-inline" method="post">
-                {% csrf_token %}
-                {{ form }}
-                <button type="submit" class="btn btn-light ms-2">Analyze</button>
-            </form>
-        </nav>
+        <div class="container">
+            <nav class="navbar navbar-dark bg-dark justify-content-between">
+                <a class="navbar-brand" href="/">Valuat.io</a>
+                <form class="form-inline" method="post">
+                    {% csrf_token %}
+                    {{ form }}
+                    <button type="submit" class="btn btn-light ms-2">Analyze</button>
+                </form>
+            </nav>
+        </div>
     </div>
+    {% comment %} NAV END {% endcomment %}
     <div class="d-flex justify-content-center align-items-center">
-        <main class="text-center mt-5">
+        <main class="mt-5 w-100">
             <div class="container mb-5">
                 <div class="row justify-content-md-center align-items-center">
-                    <div class="col col-lg-2">
-                        <img src="{{ fundamentals.logo }}" class="img-fluid" style="height: 100px;" alt="{{ fundamentals.name }} logo">
-                    </div>
-                    <div class="col-md-auto">
-                        <h2 class="mb-0">{{ fundamentals.name }} Valuation</h2>
-                    </div>
+                    <h2 class="mb-0 text-center">{{ fundamentals.name }} Valuation</h2>
                 </div>
             </div>
+            {% comment %} BASIC INFO & CHART START {% endcomment %}
             <div class="container mb-5">
                 <div class="row">
                     <div class="col-md-6">
-                        <h4 class="mb-3">Stock info</h4>
-                        <table class="table mb-5">
+                        <h4 class="mb-3 text-center">Basic info</h4>
+                        <table class="table table-borderless">
                             <tbody>
                                 <tr>
-                                    <td>Ticker</td>
-                                    <td class="text-end">{{ fundamentals.symbol }}</td>
+                                    <td>Ticker:</td>
+                                    <td class="text-end fw-bold">{{ fundamentals.symbol }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Last price</td>
-                                    <td class="text-end">{{ fundamentals.price | floatformat:2 }}
+                                    <td>Price:</td>
+                                    <td class="text-end fw-bold">{{ fundamentals.price|floatformat:2 }}
                                         {{ fundamentals.currency }}</td>
                                 </tr>
                                 <tr>
-                                    <td>P/E Ratio current</td>
-                                    <td class="text-end">{{ fundamentals.pe_ratio | floatformat:2 }}</td>
+                                    <td>Market cap:</td>
+                                    <td class="text-end fw-bold">{{ fundamentals.market_cap_original|intword }}
+                                        {{ fundamentals.currency }}</td>
                                 </tr>
                                 <tr>
-                                    <td>P/E Ratio 4 yrs median</td>
-                                    <td class="text-end">
-                                        {% if fundamentals.pe_ratio_median == 25 %}
-                                        <span class="text-danger">Over 25!</span>
-                                        {% else %}
-                                        {{ fundamentals.pe_ratio_median | floatformat:2 }}
-                                        {% endif %}
+                                    <td>Country:</td>
+                                    <td class="text-end fw-bold">{{ fundamentals.country }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Info updated on:</td>
+                                    <td class="text-end fw-bold">{{ fundamentals.data_saved_on|date:'d M Y H:i'  }}
                                     </td>
                                 </tr>
+                            </tbody>
+                        </table>
 
+                        <div class="accordion accordion-flush mt-0 mb-0" id="accordionFlushExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-headingOne">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#flush-collapseOne" aria-expanded="false"
+                                        aria-controls="flush-collapseOne">
+                                        Business summary:
+                                    </button>
+                                </h2>
+                                <div id="flush-collapseOne" class="accordion-collapse collapse"
+                                    aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                    <div class="accordion-body"> {{ fundamentals.description }} </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="mb-3 text-center">Daily chart</h4>
+                        <div class="d-flex justify-content-center align-items-center">
+                            DAILY CHART PLACEHOLDER
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% comment %} BASIC INFO & CHART END {% endcomment %}
+            {% comment %} FUNDAMENTALS START {% endcomment %}
+            <div class="container mb-5">
+                <div class="row">
+                    <h3 class="mb-3 text-center">Fundamentals</h3>
+                    <div class="col-md-4">
+                        <h4 class="mb-3 text-center">Financial strenght</h4>
+                        <table class="table table-borderless">
+                            <tbody>
                                 <tr>
-                                    <td>ROE current</td>
-                                    <td class="text-end">{{ fundamentals.roe | floatformat:2 }} %</td>
+                                    <td>D/E:</td>
+                                    <td class="text-end fw-bold">
+                                        &#9632;&nbsp;{{ fundamentals.debt_to_equity|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
-                                    <td>ROE 4 yrs median</td>
-                                    <td class="text-end">{{ fundamentals.roe_median | floatformat:2 }} %</td>
-                                </tr>
-
-                                <tr>
-                                    <td>Total Stockholders Equity</td>
-                                    <td class="text-end">{{ fundamentals.tse | floatformat:0 }} mil.</td>
+                                    <td>F-Score:</td>
+                                    <td class="text-end fw-bold">&#9632;&nbsp;X</td>
                                 </tr>
                                 <tr>
-                                    <td>Shares Outstanding</td>
-                                    <td class="text-end">{{ fundamentals.shares_outstanding | floatformat:0 }} mil.</td>
+                                    <td>M-Score:</td>
+                                    <td class="text-end fw-bold">&#9632;&nbsp;X</td>
                                 </tr>
                                 <tr>
-                                    <td>Dividend Payout Ratio current</td>
-                                    <td class="text-end">{{ fundamentals.payout_ratio | floatformat:2 }}</td>
+                                    <td>Z-Score:</td>
+                                    <td class="text-end fw-bold">&#9632;&nbsp;X</td>
                                 </tr>
                                 <tr>
-                                    <td>Dividend Payout Ratio 4 yrs median</td>
-                                    <td class="text-end">{{ fundamentals.payout_ratio_median | floatformat:2 }}</td>
+                                    <td>WACC/ROIC:</td>
+                                    <td class="text-end fw-bold">&#9632;&nbsp;X</td>
                                 </tr>
-                                <tr>
-                                    <td>Data saved on</td>
-                                    <td class="text-end">{{ fundamentals.data_saved_on }}</td>
-                                </tr>
-
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-md-6">
-                        <h4 class="mb-3">Expected return</h4>
-                        <table class="table">
+                    <div class="col-md-4">
+                        <h4 class="mb-3 text-center">Profitability & Dividends</h4>
+                        <table class="table table-borderless">
                             <tbody>
                                 <tr>
-                                    <td>Total Stockholders Equity per Share</td>
-                                    <td class="text-end">{{ roi.tseps | floatformat:2 }} {{ fundamentals.currency }}
+                                    <td>ROE:</td>
+                                    <td class="text-end fw-bold">
+                                        &#9632;&nbsp;{{ fundamentals.roe|2decimal_percentage }}</td>
+                                </tr>
+                                <tr>
+                                    <td>EPS:</td>
+                                    <td class="text-end fw-bold">
+                                        &#9632;&nbsp;{{ fundamentals.eps|floatformat:2 }}&nbsp;{{ fundamentals.currency }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>Total dividend (after tax)</td>
-                                    <td class="text-end">{{ roi.total_dividend | floatformat:2 }}
-                                        {{ fundamentals.currency }}</td>
+                                    <td>&nbsp;
+                                    <td>
                                 </tr>
                                 <tr>
-                                    <td>Expected price + dividends</td>
-                                    <td class="text-end">{{ roi.expected_price_including_dividends | floatformat:2 }}
-                                        {{ fundamentals.currency }}</td>
+                                    <td>Dividend amount:</td>
+                                    <td class="text-end fw-bold">
+                                        &#9632;&nbsp;{{ fundamentals.dividend_value|floatformat:2 }}&nbsp;{{ fundamentals.currency }}
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td>Expected return per share in 7 years</td>
-                                    <td class="text-end">{{ roi.expected_absolute_roi | floatformat:2 }}
-                                        {{ fundamentals.currency }}</td>
+                                    <td>Dividend yield:</td>
+                                    <td class="text-end fw-bold">
+                                        &#9632;&nbsp;{{ fundamentals.dividend_yield|2decimal_percentage }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Expected % return per share in 7 years</td>
-                                    <td class="text-end">{{ roi.expected_percentage_roi | percentage}}</td>
+                                    <td>Payout ratio:</td>
+                                    <td class="text-end fw-bold">
+                                        &#9632;&nbsp;{{ fundamentals.payout_ratio|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Expected yearly return</td>
-                                    <td class="text-end">{{ roi.expected_yearly_return | percentage }}</td>
+                                    <td>Ex-dividend date:</td>
+                                    <td class="text-end fw-bold">
+                                        {{ fundamentals.ex_divi_date|timestamp_to_time|date:"d M Y" }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <h4 class="mb-3 text-center">Valuation</h4>
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td>PE:</td>
+                                    <td class="text-end fw-bold">&#9632;&nbsp;{{ fundamentals.pe_ratio|floatformat:2 }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>PEG:</td>
+                                    <td class="text-end fw-bold">&#9632;&nbsp;{{ fundamentals.peg_ratio|floatformat:2 }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>PS:</td>
+                                    <td class="text-end fw-bold">&#9632;&nbsp;{{ fundamentals.ps_ratio|floatformat:2 }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>PB:</td>
+                                    <td class="text-end fw-bold">&#9632;&nbsp;{{ fundamentals.pb_ratio|floatformat:2 }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>P/FCF:</td>
+                                    <td class="text-end fw-bold">
+                                        &#9632;&nbsp;{{ fundamentals.pfcf_ratio|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Quick ratio:</td>
+                                    <td class="text-end fw-bold">
+                                        &#9632;&nbsp;{{ fundamentals.quick_ratio|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Current ratio:</td>
+                                    <td class="text-end fw-bold">
+                                        &#9632;&nbsp;{{ fundamentals.current_ratio|floatformat:2 }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
+            {% comment %} FUNDAMENTALS END {% endcomment %}
+            {% comment %} LONG TERM ANALYSIS START {% endcomment %}
             <div class="container">
                 <div class="row">
                     <div class="accordion mb-3" id="accordionExample">
@@ -164,45 +243,45 @@
                                         <tbody>
                                             <tr>
                                                 <th scope="row">1<sup>st</sup> year</th>
-                                                <td>{{ 7yrs.1.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.1.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.1.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.1.0|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.1.1|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.1.2|floatformat:2 }} {{ fundamentals.currency }}</td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">2<sup>nd</sup> year</th>
-                                                <td>{{ 7yrs.2.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.2.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.2.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.2.0|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.2.1|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.2.2|floatformat:2 }} {{ fundamentals.currency }}</td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">3<sup>rd</sup> year</th>
-                                                <td>{{ 7yrs.3.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.3.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.3.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.3.0|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.3.1|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.3.2|floatformat:2 }} {{ fundamentals.currency }}</td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">4<sup>th</sup> year</th>
-                                                <td>{{ 7yrs.4.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.4.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.4.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.4.0|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.4.1|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.4.2|floatformat:2 }} {{ fundamentals.currency }}</td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">5<sup>th</sup> year</th>
-                                                <td>{{ 7yrs.5.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.5.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.5.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.5.0|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.5.1|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.5.2|floatformat:2 }} {{ fundamentals.currency }}</td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">6<sup>th</sup> year</th>
-                                                <td>{{ 7yrs.6.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.6.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.6.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.6.0|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.6.1|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.6.2|floatformat:2 }} {{ fundamentals.currency }}</td>
                                             </tr>
                                             <tr>
                                                 <th scope="row">7<sup>th</sup> year</th>
-                                                <td>{{ 7yrs.7.0 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.7.1 | floatformat:2 }} {{ fundamentals.currency }}</td>
-                                                <td>{{ 7yrs.7.2 | floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.7.0|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.7.1|floatformat:2 }} {{ fundamentals.currency }}</td>
+                                                <td>{{ 7yrs.7.2|floatformat:2 }} {{ fundamentals.currency }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
