@@ -2,6 +2,8 @@ import yfinance as yf
 from .math_constants import THOUSAND as K, MILLION as M, HUNDRED as H
 import statistics
 from datetime import datetime
+import plotly.graph_objects as go
+from plotly.offline import plot
 
 
 def valuation_dictionary(ticker):
@@ -33,7 +35,6 @@ def valuation_dictionary(ticker):
     pe_ratio_4_yrs_median = price_earnings_ratio_4_yrs_median(ticker, last_4_fiscal_yrs, eps_last_4_yrs)
     payout_ratio_4_yrs_median = dividend_payout_ratio_4_yrs_median(
         ticker, last_4_fiscal_yrs, earnings_dict, current_shares_outstanding_in_mil)
-    # print(info)
     ticker_fundamentals = {
         # basics
         'name': info['longName'],
@@ -61,6 +62,7 @@ def valuation_dictionary(ticker):
         'quick_ratio': info['quickRatio'],
         'current_ratio': info['currentRatio'],
         'tse': total_stockholders_equity_in_mil,
+        'tse_original': total_stockholders_equity_in_mil * M,
         'tse_per_share': tse_per_share,
         # dividends
         'dividend_yield': info['dividendYield'] * H if info['dividendYield'] != None else None,
@@ -206,3 +208,17 @@ def return_on_investment(fundamentals, overview):
         'expected_percentage_roi': expected_percentage_roi,
         'expected_yearly_return': expected_yearly_return
     }
+
+
+def candlestick(ticker):
+
+    df = yf.Ticker(ticker).history(period="5y")
+
+    fig = go.Figure(data=[go.Candlestick(x=df.index,
+                open=df['Open'],
+                high=df['High'],
+                low=df['Low'],
+                close=df['Close'])])
+
+    candlestick_div = plot(fig, output_type ='div')
+    return candlestick_div

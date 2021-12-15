@@ -90,7 +90,8 @@
                     <div class="col-md-6">
                         <h4 class="mb-3 text-center">Daily chart</h4>
                         <div class="d-flex justify-content-center align-items-center">
-                            DAILY CHART PLACEHOLDER
+                            {% comment %} DAILY CHART PLACEHOLDER {% endcomment %}
+                            {{ candlestick|safe}}
                         </div>
                     </div>
                 </div>
@@ -99,7 +100,7 @@
             {% comment %} FUNDAMENTALS START {% endcomment %}
             <div class="container mb-5">
                 <div class="row">
-                    <h3 class="mb-3 text-center">Fundamentals</h3>
+                    <h3 class="mb-5 text-center">Fundamentals</h3>
                     <div class="col-md-4">
                         <h4 class="mb-3 text-center">Financial strenght</h4>
                         <table class="table table-borderless">
@@ -135,7 +136,7 @@
                                 <tr>
                                     <td>ROE:</td>
                                     <td class="text-end fw-bold">
-                                        &#9632;&nbsp;{{ fundamentals.roe|2decimal_percentage }}</td>
+                                        &#9632;&nbsp;{{ fundamentals.roe|2decimal_percentage_divided_by_100 }}</td>
                                 </tr>
                                 <tr>
                                     <td>EPS:</td>
@@ -156,7 +157,8 @@
                                 <tr>
                                     <td>Dividend yield:</td>
                                     <td class="text-end fw-bold">
-                                        &#9632;&nbsp;{{ fundamentals.dividend_yield|2decimal_percentage }}</td>
+                                        &#9632;&nbsp;{{ fundamentals.dividend_yield|2decimal_percentage_divided_by_100 }}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Payout ratio:</td>
@@ -216,10 +218,98 @@
                 </div>
             </div>
             {% comment %} FUNDAMENTALS END {% endcomment %}
+            {% comment %} SCORING START {% endcomment %}
+            <div class="container mb-5">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="text-center">Score:&nbsp;<span
+                                class="fw-bold">&#9632;&nbsp;SCORE&nbsp;PLACEHOLDER</span></h4>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="text-center">Peter&nbsp;Lynch&nbsp;Fair&nbsp;Value:&nbsp;<span
+                                class="fw-bold">XXX.XX&nbsp;{{ fundamentals.currency }}</span></h4>
+                    </div>
+                </div>
+            </div>
+            {% comment %} SCORING END {% endcomment %}
             {% comment %} LONG TERM ANALYSIS START {% endcomment %}
+            <div class="container mb-5">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="mb-3 text-center">Long term fundamentals</h4>
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td>PE (4y median):</td>
+                                    <td class="text-end fw-bold">
+                                        &#9632;&nbsp;{{ fundamentals.pe_ratio_median|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td>ROE (4y median):</td>
+                                    <td class="text-end fw-bold">
+                                        &#9632;&nbsp;{{ fundamentals.roe_median|2decimal_percentage_divided_by_100 }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Payout ratio (4y median):</td>
+                                    <td class="text-end fw-bold">
+                                        &#9632;&nbsp;{{ fundamentals.payout_ratio_median|floatformat:2 }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Total Stockholders Equity:</td>
+                                    <td class="text-end fw-bold">
+                                        {{ fundamentals.tse_original|intword }}&nbsp;{{ fundamentals.currency }}</td>
+                                </tr>
+                                <tr>
+                                    <td>TSE per share:</td>
+                                    <td class="text-end fw-bold">
+                                        {{ fundamentals.tse_per_share|floatformat:2 }}&nbsp;{{ fundamentals.currency }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="mb-3 text-center">Expected return in 7 years</h4>
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td>Total dividend (after tax):</td>
+                                    <td class="text-end fw-bold">
+                                        {{ roi.total_dividend|floatformat:2 }}&nbsp;{{ fundamentals.currency }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Expected price + dividends:</td>
+                                    <td class="text-end fw-bold">
+                                        {{ roi.expected_price_including_dividends|floatformat:2 }}&nbsp;{{ fundamentals.currency }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Expected return per share in 7 yrs:</td>
+                                    <td class="text-end fw-bold">
+                                        {{ roi.expected_absolute_roi|floatformat:2 }}&nbsp;{{ fundamentals.currency }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Expected % return per share in 7 yrs:</td>
+                                    <td class="text-end fw-bold">{{ roi.expected_percentage_roi|2decimal_percentage }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Expected yearly return:</td>
+                                    <td class="text-end fw-bold">{{ roi.expected_yearly_return|2decimal_percentage }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% comment %} LONG TERM ANALYSIS END {% endcomment %}
             <div class="container">
                 <div class="row">
-                    <div class="accordion mb-3" id="accordionExample">
+                    <div class="accordion accordion-flush mb-3" id="accordionExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingOne">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -292,7 +382,6 @@
                 </div>
             </div>
         </main>
-
         <!-- Bootstrap Bundle with Popper -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
