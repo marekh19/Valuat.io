@@ -19,6 +19,11 @@ def valuation_dictionary(ticker):
     earnings = ticker.earnings
     quarterly_earnings = ticker.quarterly_earnings
     earnings_dict = ticker.earnings['Earnings'].to_dict()
+    ##### EBIT DICT start ##### ----- need to change to EBITDA
+    ebit_dict = ticker.financials.loc['Ebit'].to_dict()
+    for key in ebit_dict:
+        print(f'{key.year} : {ebit_dict[key]}')
+    ##### EBIT DICT end ##### ----- need to change to EBITDA
     # CALCULATED VALUES
     last_4_fiscal_yrs = sorted(list(earnings_dict.keys()), reverse=True)
     shares_outstanding_complete = shares_outstanding_last_4_yrs(ticker, last_4_fiscal_yrs)
@@ -35,13 +40,10 @@ def valuation_dictionary(ticker):
     pe_ratio_4_yrs_median = price_earnings_ratio_4_yrs_median(ticker, last_4_fiscal_yrs, eps_last_4_yrs)
     payout_ratio_4_yrs_median = dividend_payout_ratio_4_yrs_median(
         ticker, last_4_fiscal_yrs, earnings_dict, shares_outstanding_complete)
-    ##### TEMP SHARES OUTSTANDING start #####
-    print('EARNINGS COMPLETE:')
-    print(ticker.earnings)
-    print('SHARES OUTSTANDING COMPLETE:')
-    for key in shares_outstanding_complete:
-        print(f'{key} : {shares_outstanding_complete[key]}')
-    ##### TEMP SHARES OUTSTANDING end #####
+    ##### PETER LYNCH FAIR VALUE start #####
+    print('PETER LYNCH FAIR VALUE:')
+    print(peter_lynch_fair_value(ebit_dict, current_eps))
+    ##### PETER LYNCH FAIR VALUE end #####
     ticker_fundamentals = {
         # basics
         'name': info['longName'],
@@ -80,6 +82,11 @@ def valuation_dictionary(ticker):
     }
     return ticker_fundamentals
 
+def peter_lynch_fair_value(ebit_dict, current_eps):
+    years = sorted(ebit_dict.keys())
+    earnings_growth_rate = years[-1].year / years[0].year / len(years) * H
+    print(f'GROWTH RATE: {earnings_growth_rate}')
+    return earnings_growth_rate * current_eps
 
 def shares_outstanding_last_4_yrs(ticker, last_4_fiscal_yrs):
     shares_outstanding = {}
@@ -87,7 +94,7 @@ def shares_outstanding_last_4_yrs(ticker, last_4_fiscal_yrs):
     # check if data shares outstanding data is available
     if ticker.shares is None:
         for key in last_4_fiscal_yrs:
-            shares_outstanding[key] = ticker.info['sharesOutstanding']
+            shares_outstanding[key] = ticker.info['sharesOutstanding'] / M
     #  if available, match earnings years with shares outstanding years
     else:
         shares_fiscal_yrs = ticker.shares['BasicShares'].to_dict()
