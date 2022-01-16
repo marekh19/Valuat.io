@@ -1,7 +1,7 @@
 import yfinance as yf
 from .math_constants import THOUSAND as K, MILLION as M, HUNDRED as H
 import statistics
-from datetime import datetime
+from datetime import datetime, date
 import plotly.graph_objects as go
 from plotly.offline import plot
 
@@ -21,6 +21,7 @@ def valuation_dictionary(ticker):
     earnings_dict = ticker.earnings['Earnings'].to_dict()
     # CALCULATED VALUES
     last_4_fiscal_yrs = sorted(list(earnings_dict.keys()), reverse=True)
+    shares_outstanding_complete = shares_outstanding_last_4_yrs(ticker, last_4_fiscal_yrs)
     total_stockholders_equity_in_mil = quarterly_balance_sheet.loc[
         'Total Stockholder Equity'][0] / M
     earnings_last_4_quarters_sum = earnings_sum_last_4_quarters(quarterly_earnings)
@@ -29,12 +30,18 @@ def valuation_dictionary(ticker):
     current_roe = return_on_equity(earnings_last_4_quarters_sum, total_stockholders_equity_in_mil)
     tse_per_share = total_stockholders_equity_per_share(
         total_stockholders_equity_in_mil, current_shares_outstanding_in_mil)
-    eps_last_4_yrs = earnings_per_share_last_4_yrs_in_mil(
-        last_4_fiscal_yrs, earnings_dict, current_shares_outstanding_in_mil)
+    eps_last_4_yrs = earnings_per_share_last_4_yrs_in_mil(last_4_fiscal_yrs, earnings_dict, shares_outstanding_complete)
     roe_4_yrs_median = return_on_equity_4yrs_median(balance_sheet, earnings)
     pe_ratio_4_yrs_median = price_earnings_ratio_4_yrs_median(ticker, last_4_fiscal_yrs, eps_last_4_yrs)
     payout_ratio_4_yrs_median = dividend_payout_ratio_4_yrs_median(
-        ticker, last_4_fiscal_yrs, earnings_dict, current_shares_outstanding_in_mil)
+        ticker, last_4_fiscal_yrs, earnings_dict, shares_outstanding_complete)
+    ##### TEMP SHARES OUTSTANDING start #####
+    print('EARNINGS COMPLETE:')
+    print(ticker.earnings)
+    print('SHARES OUTSTANDING COMPLETE:')
+    for key in shares_outstanding_complete:
+        print(f'{key} : {shares_outstanding_complete[key]}')
+    ##### TEMP SHARES OUTSTANDING end #####
     ticker_fundamentals = {
         # basics
         'name': info['longName'],
@@ -74,10 +81,32 @@ def valuation_dictionary(ticker):
     return ticker_fundamentals
 
 
-def earnings_per_share_last_4_yrs_in_mil(last_4_fiscal_yrs, earnings_dict, shares_outstanding):
+def shares_outstanding_last_4_yrs(ticker, last_4_fiscal_yrs):
+    shares_outstanding = {}
+    current_year = date.today().year
+    # check if data shares outstanding data is available
+    if ticker.shares is None:
+        for key in last_4_fiscal_yrs:
+            shares_outstanding[key] = ticker.info['sharesOutstanding']
+    #  if available, match earnings years with shares outstanding years
+    else:
+        shares_fiscal_yrs = ticker.shares['BasicShares'].to_dict()
+        for key in last_4_fiscal_yrs:
+            shares_outstanding[key] = 0
+        for key in shares_fiscal_yrs:
+            shares_outstanding[key] = shares_fiscal_yrs[key] / M
+        # if year of shares outstanding is missing, fill it with year + 1 data
+        for key in shares_outstanding:
+            if shares_outstanding[key] == 0:
+                shares_outstanding[key] = shares_outstanding[key+1]
+    shares_outstanding[current_year] = ticker.info['sharesOutstanding']
+    return shares_outstanding
+
+
+def earnings_per_share_last_4_yrs_in_mil(last_4_fiscal_yrs, earnings_dict, shares_outstanding_overview):
     eps_last_4_yrs = {}
     for year in last_4_fiscal_yrs:
-        eps_last_4_yrs[year] = (earnings_dict[year] / shares_outstanding) / M
+        eps_last_4_yrs[year] = (earnings_dict[year] / shares_outstanding_overview[year]) / M
     return eps_last_4_yrs
 
 
@@ -151,7 +180,7 @@ def return_on_equity(earnings, equity):
 
 
 def total_stockholders_equity_per_share(tse, shares_outstanding):
-    return float(tse / shares_outstanding)
+    return tse / shares_outstanding
 
 
 def compute_year(previous_year, fundamentals):
@@ -210,15 +239,12 @@ def return_on_investment(fundamentals, overview):
     }
 
 
-def candlestick(ticker):
-
-    df = yf.Ticker(ticker).history(period="5y")
-
-    fig = go.Figure(data=[go.Candlestick(x=df.index,
-                open=df['Open'],
-                high=df['High'],
-                low=df['Low'],
-                close=df['Close'])])
-
-    candlestick_div = plot(fig, output_type ='div')
-    return candlestick_div
+# def candlestick(ticker):
+#     df = yf.Ticker(ticker).history(period="5y")
+#     fig = go.Figure(data=[go.Candlestick(x=df.index,
+#                                          open=df['Open'],
+#                                          high=df['High'],
+#                                          low=df['Low'],
+#                                          close=df['Close'])])
+#     candlestick_div = plot(fig, output_type='div')
+#     return candlestick_div
