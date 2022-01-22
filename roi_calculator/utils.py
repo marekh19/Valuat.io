@@ -19,11 +19,6 @@ def valuation_dictionary(ticker):
     earnings = ticker.earnings
     quarterly_earnings = ticker.quarterly_earnings
     earnings_dict = ticker.earnings['Earnings'].to_dict()
-    ##### EBIT DICT start ##### ----- need to change to EBITDA
-    ebit_dict = ticker.financials.loc['Ebit'].to_dict()
-    for key in ebit_dict:
-        print(f'{key.year} : {ebit_dict[key]}')
-    ##### EBIT DICT end ##### ----- need to change to EBITDA
     # CALCULATED VALUES
     last_4_fiscal_yrs = sorted(list(earnings_dict.keys()), reverse=True)
     shares_outstanding_complete = shares_outstanding_last_4_yrs(ticker, last_4_fiscal_yrs)
@@ -40,10 +35,17 @@ def valuation_dictionary(ticker):
     pe_ratio_4_yrs_median = price_earnings_ratio_4_yrs_median(ticker, last_4_fiscal_yrs, eps_last_4_yrs)
     payout_ratio_4_yrs_median = dividend_payout_ratio_4_yrs_median(
         ticker, last_4_fiscal_yrs, earnings_dict, shares_outstanding_complete)
-    ##### PETER LYNCH FAIR VALUE start #####
-    print('PETER LYNCH FAIR VALUE:')
-    print(peter_lynch_fair_value(ebit_dict, current_eps))
-    ##### PETER LYNCH FAIR VALUE end #####
+    f_score = piotroski_f_score(ticker)
+    z_score = altman_z_score(ticker)
+    # save to csv START
+    ticker.quarterly_financials.to_csv('quarterly_financials.csv')
+    ticker.quarterly_balancesheet.to_csv('quarterly_balancesheet.csv')
+    ticker.balancesheet.to_csv('balancesheet.csv')
+    ticker.quarterly_cashflow.to_csv('quarterly_cashflow.csv')
+    ticker.quarterly_earnings.to_csv('quarterly_earnings.csv')
+    ticker.earnings.to_csv('earnings.csv')
+    ticker.financials.to_csv('financials.csv')
+    # save to csv END
     ticker_fundamentals = {
         # basics
         'name': info['longName'],
@@ -79,14 +81,118 @@ def valuation_dictionary(ticker):
         'payout_ratio': info['payoutRatio'],
         'payout_ratio_median': payout_ratio_4_yrs_median,
         'ex_divi_date': info['exDividendDate'],
+        # scores
+        'f_score': f_score,
+        'z_score': z_score,
     }
     return ticker_fundamentals
 
-def peter_lynch_fair_value(ebit_dict, current_eps):
-    years = sorted(ebit_dict.keys())
-    earnings_growth_rate = years[-1].year / years[0].year / len(years) * H
-    print(f'GROWTH RATE: {earnings_growth_rate}')
-    return earnings_growth_rate * current_eps
+
+# region WACC vs ROIC
+def calculate_wacc(ticker):
+    return
+# endregion WACC vs ROIC
+
+
+# region Altman Z Score
+def altman_z_score(ticker):
+    bs = ticker.quarterly_balancesheet
+    qf = ticker.quarterly_financials
+    qe = ticker.quarterly_earnings
+    # A=Working capital/total assets
+    # B=Retained earnings/total assets
+    # C=Earnings before interest and taxes (EBIT)/total assets
+    # D=Market value of equity/book value of total liabilities
+    # E=Sales/total assets
+    a = (bs.loc['Total Current Assets'][0] - bs.loc['Total Current Liabilities'][0]) / bs.loc['Total Assets'][0]
+    b = bs.loc['Retained Earnings'][0] / bs.loc['Total Assets'][0]
+    c = qf.loc['Ebit'][0] / bs.loc['Total Assets'][0]
+    d = ticker.info['marketCap'] / bs.loc['Total Liab'][0]
+    e = qe['Revenue'].sum() / bs.loc['Total Assets'][0]
+    return (1.2 * a) + (1.4 * b) + (3.3 * c) + (0.6 * d) + (1.0 * e)
+# endregion Altman Z Score
+
+
+# region Piotroski F Score
+def piotroski_f_score(ticker):
+    f_score = 0
+    # Positive net income (1 point)
+    if earnings_sum_last_4_quarters(ticker.quarterly_earnings) > 0:
+        f_score += 1
+    # Positive return on assets (ROA) in the current year (1 point)
+    if return_on_assets(ticker) > 0:
+        f_score += 1
+    # Positive operating cash flow in the current year (1 point)
+    if positive_operating_cashflow(ticker):
+        f_score += 1
+    # Cash flow from operations being greater than net Income (quality of earnings) (1 point)
+    if operating_cashflow_greater_than_net_income(ticker):
+        f_score += 1
+    # Lower amount of long term debt in the current period, compared to the previous year (decreased leverage) (1 point)
+    if lower_long_term_debt_than_prev_year(ticker):
+        f_score += 1
+    # Higher current ratio this year compared to the previous year (more liquidity) (1 point)
+    if higher_current_ratio_than_prev_year(ticker):
+        f_score += 1
+    # No new shares were issued in the last year (lack of dilution) (1 point).
+    if ticker.shares is not None:
+        if no_new_shares_issued(ticker):
+            f_score += 1
+    else:
+        f_score += 0.5
+    # A higher gross margin compared to the previous year (1 point)
+    if higher_gross_margin_than_prev_year(ticker):
+        f_score += 1
+    # A higher asset turnover ratio compared to the previous year (1 point)
+    if higher_asset_turnover_ration_than_prev_year(ticker):
+        f_score += 1
+    return f_score
+
+
+def return_on_assets(ticker):
+    earnings = ticker.quarterly_earnings['Earnings'].sum()
+    assets = ticker.quarterly_balancesheet.loc['Total Assets'].sum()
+    return earnings / assets
+
+
+def positive_operating_cashflow(ticker):
+    return ticker.quarterly_cashflow.loc['Total Cash From Operating Activities'].sum() > 0
+
+
+def operating_cashflow_greater_than_net_income(ticker):
+    operating_cashflow = ticker.quarterly_cashflow.loc['Total Cash From Operating Activities'].sum()
+    net_income = ticker.quarterly_cashflow.loc['Net Income'].sum()
+    return operating_cashflow > net_income
+
+
+def lower_long_term_debt_than_prev_year(ticker):
+    return ticker.balancesheet.loc['Long Term Debt'][0] < ticker.balancesheet.loc['Long Term Debt'][1]
+
+
+def higher_current_ratio_than_prev_year(ticker):
+    current_year = ticker.balancesheet.loc['Total Assets'][0] / ticker.balancesheet.loc['Total Liab'][0]
+    prev_year = ticker.balancesheet.loc['Total Assets'][1] / ticker.balancesheet.loc['Total Liab'][1]
+    return current_year > prev_year
+
+
+def no_new_shares_issued(ticker):
+    return ticker.shares.iloc[-1][0] <= ticker.shares.iloc[-2][0]
+
+
+def higher_gross_margin_than_prev_year(ticker):
+    current_year = ticker.financials.loc['Gross Profit'][0] / ticker.financials.loc['Total Revenue'][0]
+    prev_year = ticker.financials.loc['Gross Profit'][1] / ticker.financials.loc['Total Revenue'][1]
+    return current_year > prev_year
+
+
+def higher_asset_turnover_ration_than_prev_year(ticker):
+    e = ticker.earnings
+    bs = ticker.balancesheet
+    current_year = e.iloc[-1]['Revenue'] / ((bs.loc['Total Assets'][0] + bs.loc['Total Assets'][1]) / 2)
+    prev_year = e.iloc[-2]['Revenue'] / ((bs.loc['Total Assets'][1] + bs.loc['Total Assets'][2]) / 2)
+    return current_year > prev_year
+# endregion Piotroski F Score
+
 
 def shares_outstanding_last_4_yrs(ticker, last_4_fiscal_yrs):
     shares_outstanding = {}

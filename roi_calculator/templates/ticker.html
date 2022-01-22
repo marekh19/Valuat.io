@@ -37,7 +37,7 @@
         <main class="mt-5 w-100">
             <div class="container mb-5">
                 <div class="row justify-content-md-center align-items-center">
-                    <h2 class="mb-0 text-center">{{ fundamentals.name }} Valuation</h2>
+                    <h2 class="mb-0 text-center">{{ fundamentals.name }}</h2>
                 </div>
             </div>
             {% comment %} BASIC INFO & CHART START {% endcomment %}
@@ -114,15 +114,12 @@
                                 </tr>
                                 <tr>
                                     <td>F-Score:</td>
-                                    <td class="text-end fw-bold">&#9632;&nbsp;X</td>
-                                </tr>
-                                <tr>
-                                    <td>M-Score:</td>
-                                    <td class="text-end fw-bold">&#9632;&nbsp;X</td>
+                                    <td class="text-end fw-bold">&#9632;&nbsp;{{ fundamentals.f_score }}</td>
                                 </tr>
                                 <tr>
                                     <td>Z-Score:</td>
-                                    <td class="text-end fw-bold">&#9632;&nbsp;X</td>
+                                    <td class="text-end fw-bold">&#9632;&nbsp;{{ fundamentals.z_score|floatformat:2 }}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>WACC/ROIC:</td>

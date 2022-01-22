@@ -12,7 +12,7 @@ def ticker_form(request):
         form = TickerForm(request.POST)
         if form.is_valid():
             ticker = form.cleaned_data['ticker'].upper().strip()
-        return redirect('/' + ticker + '/')
+        return redirect('/ticker/' + ticker + '/')
 
 
 def ticker_view(request, ticker):
@@ -33,4 +33,4 @@ def ticker_view(request, ticker):
         form = TickerFormSmall(request.POST)
         if form.is_valid():
             ticker = form.cleaned_data['ticker'].upper().strip()
-        return redirect('/' + ticker + '/')
+        return redirect('/ticker/' + ticker + '/')

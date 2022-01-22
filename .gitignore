@@ -3,3 +3,4 @@
 .dbsqlite3
 __pycache__/
 /venv
+*.csv
