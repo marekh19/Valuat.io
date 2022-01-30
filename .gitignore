@@ -4,3 +4,6 @@
 __pycache__/
 /venv
 *.csv
+/roi_calculator/static/img
+/roi_calculator/static/favicons
+.~lock.*

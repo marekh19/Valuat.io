@@ -38,13 +38,13 @@ def valuation_dictionary(ticker):
     f_score = piotroski_f_score(ticker)
     z_score = altman_z_score(ticker)
     # save to csv START
-    ticker.quarterly_financials.to_csv('quarterly_financials.csv')
-    ticker.quarterly_balancesheet.to_csv('quarterly_balancesheet.csv')
-    ticker.balancesheet.to_csv('balancesheet.csv')
-    ticker.quarterly_cashflow.to_csv('quarterly_cashflow.csv')
-    ticker.quarterly_earnings.to_csv('quarterly_earnings.csv')
-    ticker.earnings.to_csv('earnings.csv')
-    ticker.financials.to_csv('financials.csv')
+    # ticker.quarterly_financials.to_csv('quarterly_financials.csv')
+    # ticker.quarterly_balancesheet.to_csv('quarterly_balancesheet.csv')
+    # ticker.balancesheet.to_csv('balancesheet.csv')
+    # ticker.quarterly_cashflow.to_csv('quarterly_cashflow.csv')
+    # ticker.quarterly_earnings.to_csv('quarterly_earnings.csv')
+    # ticker.earnings.to_csv('earnings.csv')
+    # ticker.financials.to_csv('financials.csv')
     # save to csv END
     ticker_fundamentals = {
         # basics
@@ -88,13 +88,51 @@ def valuation_dictionary(ticker):
     return ticker_fundamentals
 
 
-# region WACC vs ROIC
-def calculate_wacc(ticker):
+# region Stock Scoring Model
+def stock_overall_score(stock_scoring):
     return
-# endregion WACC vs ROIC
 
+
+def stock_scoring(fundamentals):
+    stock_score = {
+        'debt_to_equity': [calculate_score_lower_than(fundamentals['debt_to_equity'], 1, 1.5, 2, 3, 4), 3],
+    }
+    return stock_score
+
+
+def calculate_score_lower_than(value, bm1, bm2, bm3, bm4, bm5):
+    if value <= bm1:
+        return 100
+    if value <= bm2:
+        return 80
+    if value <= bm3:
+        return 60
+    if value <= bm4:
+        return 40
+    if value <= bm5:
+        return 20
+    if value > bm5:
+        return 0
+
+
+def calculate_score_higher_than(value, bm1, bm2, bm3, bm4, bm5):
+    if value >= bm1:
+        return 100
+    if value >= bm2:
+        return 80
+    if value >= bm3:
+        return 60
+    if value >= bm4:
+        return 40
+    if value >= bm5:
+        return 20
+    if value < bm5:
+        return 0
+# endregion Stock Scoring Model
 
 # region Altman Z Score
+
+
 def altman_z_score(ticker):
     bs = ticker.quarterly_balancesheet
     qf = ticker.quarterly_financials
