@@ -90,12 +90,34 @@ def valuation_dictionary(ticker):
 
 # region Stock Scoring Model
 def stock_overall_score(stock_scoring):
-    return
+    total = 0
+    num_of_elements_weighted = 0
+    for key in stock_scoring:
+        total += stock_scoring[key][0] * stock_scoring[key][1]
+        num_of_elements_weighted += stock_scoring[key][1]
+    return total / num_of_elements_weighted
 
 
 def stock_scoring(fundamentals):
     stock_score = {
         'debt_to_equity': [calculate_score_lower_than(fundamentals['debt_to_equity'], 1, 1.5, 2, 3, 4), 3],
+        'f_score': [calculate_score_higher_than(fundamentals['f_score'], 8, 6, 5, 4, 3), 3],
+        'z_score': [calculate_score_higher_than(fundamentals['z_score'], 3, 2.6, 2.0, 1.8, 1.5), 3],
+        'roe': [calculate_score_higher_than(fundamentals['roe'], 17, 14.5, 12, 9, 6), 3],
+        # EPS placeholder - need to decide if I want to score based on if it's growing yoy
+        'dividend_yield': [calculate_score_higher_than(fundamentals['divident_yield'], 4, 3, 2, 2.5, 1), 2],
+        'payout_ratio': [calculate_score_lower_than(fundamentals['payout_ratio'], 0.4, 0.5, 0.6, 0.7, 0.9), 2],
+        'pe_ratio': [calculate_score_lower_than(fundamentals['pe_ratio'], 15, 20, 25, 30, 40), 3],
+        'peg_ratio': [calculate_score_lower_than(fundamentals['peg_ratio'], 0.8, 1, 1.3, 1.6, 2), 2],
+        # PS ratio - score based on what? not possible to score based on absolute values
+        'pb_ratio': [calculate_score_lower_than(fundamentals['pb_ratio'], 1.5, 2, 2.5, 3, 3.5), 2],
+        'pfcf_ratio': [calculate_score_lower_than(fundamentals['pfcf_ratio'], 10, 15, 20, 25, 30), 2],
+        'quick_ratio': [calculate_score_higher_than(fundamentals['quick_ratio'], 1.0, 0.8, 0.6, 0.4, 0.3), 2],
+        'current_ratio': [calculate_score_higher_than(fundamentals['current_ratio'], 1.5, 1.25, 1, 0.75, 0.5), 2],
+        'pe_ratio_median': [calculate_score_lower_than(fundamentals['pe_ratio_median'], 15, 20, 25, 30, 40), 3],
+        'roe_median': [calculate_score_higher_than(fundamentals['roe_median'], 17, 14.5, 12, 9, 6), 3],
+        'payout_ratio_median': [calculate_score_lower_than(fundamentals['payout_ratio_median'], 0.4, 0.5, 0.6, 0.7, 0.9), 2],
+
     }
     return stock_score
 
