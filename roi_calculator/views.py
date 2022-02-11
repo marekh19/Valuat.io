@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .forms import TickerForm, TickerFormSmall
-from .utils import valuation_dictionary, seven_yrs_overview, return_on_investment#, candlestick
+from .utils import valuation_dictionary, seven_yrs_overview, return_on_investment, stock_overall_score, stock_scoring  # , candlestick
 
 
 def ticker_form(request):
@@ -21,11 +21,13 @@ def ticker_view(request, ticker):
         overview = seven_yrs_overview(fundamentals)
         roi = return_on_investment(fundamentals, overview)
         form = TickerFormSmall()
+        overall_score = stock_overall_score(stock_scoring(fundamentals))
         context = {
             'fundamentals': fundamentals,
             '7yrs': overview,
             'roi': roi,
             'form': form,
+            'overall_score': overall_score,
             # 'candlestick': candlestick(ticker),
         }
         return render(request, 'ticker.html', context)

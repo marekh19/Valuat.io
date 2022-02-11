@@ -230,7 +230,8 @@
                 <div class="row">
                     <div class="col-md-6">
                         <h4 class="text-center">Score:&nbsp;<span
-                                class="fw-bold">&#9632;&nbsp;SCORE&nbsp;PLACEHOLDER</span></h4>
+                                class="fw-bold">&#9632;&nbsp;{{ overall_score|2decimal_percentage_divided_by_100 }}</span>
+                        </h4>
                     </div>
                     <div class="col-md-6">
                         <h4 class="text-center">Peter&nbsp;Lynch&nbsp;Fair&nbsp;Value:&nbsp;<span

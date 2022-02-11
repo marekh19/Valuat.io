@@ -37,15 +37,7 @@ def valuation_dictionary(ticker):
         ticker, last_4_fiscal_yrs, earnings_dict, shares_outstanding_complete)
     f_score = piotroski_f_score(ticker)
     z_score = altman_z_score(ticker)
-    # save to csv START
-    # ticker.quarterly_financials.to_csv('quarterly_financials.csv')
-    # ticker.quarterly_balancesheet.to_csv('quarterly_balancesheet.csv')
-    # ticker.balancesheet.to_csv('balancesheet.csv')
-    # ticker.quarterly_cashflow.to_csv('quarterly_cashflow.csv')
-    # ticker.quarterly_earnings.to_csv('quarterly_earnings.csv')
-    # ticker.earnings.to_csv('earnings.csv')
-    # ticker.financials.to_csv('financials.csv')
-    # save to csv END
+
     ticker_fundamentals = {
         # basics
         'name': info['longName'],
@@ -105,7 +97,7 @@ def stock_scoring(fundamentals):
         'z_score': [calculate_score_higher_than(fundamentals['z_score'], 3, 2.6, 2.0, 1.8, 1.5), 3],
         'roe': [calculate_score_higher_than(fundamentals['roe'], 17, 14.5, 12, 9, 6), 3],
         # EPS placeholder - need to decide if I want to score based on if it's growing yoy
-        'dividend_yield': [calculate_score_higher_than(fundamentals['divident_yield'], 4, 3, 2, 2.5, 1), 2],
+        'dividend_yield': [calculate_score_higher_than(fundamentals['dividend_yield'], 4, 3, 2, 2.5, 1), 2],
         'payout_ratio': [calculate_score_lower_than(fundamentals['payout_ratio'], 0.4, 0.5, 0.6, 0.7, 0.9), 2],
         'pe_ratio': [calculate_score_lower_than(fundamentals['pe_ratio'], 15, 20, 25, 30, 40), 3],
         'peg_ratio': [calculate_score_lower_than(fundamentals['peg_ratio'], 0.8, 1, 1.3, 1.6, 2), 2],
@@ -123,6 +115,10 @@ def stock_scoring(fundamentals):
 
 
 def calculate_score_lower_than(value, bm1, bm2, bm3, bm4, bm5):
+    if value == None:
+        value = 0
+    if value < 0:
+        return 0
     if value <= bm1:
         return 100
     if value <= bm2:
@@ -138,6 +134,8 @@ def calculate_score_lower_than(value, bm1, bm2, bm3, bm4, bm5):
 
 
 def calculate_score_higher_than(value, bm1, bm2, bm3, bm4, bm5):
+    if value == None:
+        value = 0
     if value >= bm1:
         return 100
     if value >= bm2:
@@ -164,11 +162,26 @@ def altman_z_score(ticker):
     # C=Earnings before interest and taxes (EBIT)/total assets
     # D=Market value of equity/book value of total liabilities
     # E=Sales/total assets
-    a = (bs.loc['Total Current Assets'][0] - bs.loc['Total Current Liabilities'][0]) / bs.loc['Total Assets'][0]
-    b = bs.loc['Retained Earnings'][0] / bs.loc['Total Assets'][0]
-    c = qf.loc['Ebit'][0] / bs.loc['Total Assets'][0]
-    d = ticker.info['marketCap'] / bs.loc['Total Liab'][0]
-    e = qe['Revenue'].sum() / bs.loc['Total Assets'][0]
+    if 'Total Current Assets' in bs and 'Total Current Liabilities' in bs and 'Total Assets' in bs:
+        a = (bs.loc['Total Current Assets'][0] - bs.loc['Total Current Liabilities'][0]) / bs.loc['Total Assets'][0]
+    else:
+        a = 0
+    if 'Retained Earnings' in bs:
+        b = bs.loc['Retained Earnings'][0] / bs.loc['Total Assets'][0]
+    else:
+        b = 0
+    if 'Ebit' in qf and 'Total Assets' in bs:
+        c = qf.loc['Ebit'][0] / bs.loc['Total Assets'][0]
+    else:
+        c = 0
+    if 'Total Liab' in bs:
+        d = ticker.info['marketCap'] / bs.loc['Total Liab'][0]
+    else:
+        d = 0
+    if 'Revenue' in qe and 'Total Assets' in bs:
+        e = qe['Revenue'].sum() / bs.loc['Total Assets'][0]
+    else:
+        e = 0
     return (1.2 * a) + (1.4 * b) + (3.3 * c) + (0.6 * d) + (1.0 * e)
 # endregion Altman Z Score
 
@@ -216,17 +229,26 @@ def return_on_assets(ticker):
 
 
 def positive_operating_cashflow(ticker):
-    return ticker.quarterly_cashflow.loc['Total Cash From Operating Activities'].sum() > 0
+    if 'Total Cash From Operating Activities' in ticker.quarterly_cashflow:
+        return ticker.quarterly_cashflow.loc['Total Cash From Operating Activities'].sum() > 0
+    else:
+        return False
 
 
 def operating_cashflow_greater_than_net_income(ticker):
-    operating_cashflow = ticker.quarterly_cashflow.loc['Total Cash From Operating Activities'].sum()
-    net_income = ticker.quarterly_cashflow.loc['Net Income'].sum()
-    return operating_cashflow > net_income
+    if 'Total Cash From Operating Activities' in ticker.quarterly_cashflow:
+        operating_cashflow = ticker.quarterly_cashflow.loc['Total Cash From Operating Activities'].sum()
+        net_income = ticker.quarterly_cashflow.loc['Net Income'].sum()
+        return operating_cashflow > net_income
+    else:
+        return False
 
 
 def lower_long_term_debt_than_prev_year(ticker):
-    return ticker.balancesheet.loc['Long Term Debt'][0] < ticker.balancesheet.loc['Long Term Debt'][1]
+    if 'Long Term Debt' in ticker.balancesheet:
+        return ticker.balancesheet.loc['Long Term Debt'][0] < ticker.balancesheet.loc['Long Term Debt'][1]
+    else:
+        return False
 
 
 def higher_current_ratio_than_prev_year(ticker):
@@ -270,9 +292,11 @@ def shares_outstanding_last_4_yrs(ticker, last_4_fiscal_yrs):
             shares_outstanding[key] = shares_fiscal_yrs[key] / M
         # if year of shares outstanding is missing, fill it with year + 1 data
         for key in shares_outstanding:
-            if shares_outstanding[key] == 0:
-                shares_outstanding[key] = shares_outstanding[key+1]
-    shares_outstanding[current_year] = ticker.info['sharesOutstanding']
+            if shares_outstanding[key] == 0 and key + 1 in shares_outstanding:
+                shares_outstanding[key] = shares_outstanding[key+1] / M
+            elif shares_outstanding[key] == 0 and key + 1 not in shares_outstanding:
+                shares_outstanding[key] = shares_outstanding[key-1]
+    shares_outstanding[current_year] = ticker.info['sharesOutstanding'] / M
     return shares_outstanding
 
 
@@ -413,7 +437,7 @@ def return_on_investment(fundamentals, overview):
 
 
 # def candlestick(ticker):
-#     df = yf.Ticker(ticker).history(period="5y")
+#     df = ticker.history(period="5y")
 #     fig = go.Figure(data=[go.Candlestick(x=df.index,
 #                                          open=df['Open'],
 #                                          high=df['High'],
