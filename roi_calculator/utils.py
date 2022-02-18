@@ -1,9 +1,10 @@
 import yfinance as yf
-from .math_constants import THOUSAND as K, MILLION as M, HUNDRED as H
+from .values.math_constants import THOUSAND as K, MILLION as M, HUNDRED as H
 import statistics
 from datetime import datetime, date
 import plotly.graph_objects as go
 from plotly.offline import plot
+from configparser import ConfigParser
 
 
 def valuation_dictionary(ticker):
@@ -91,25 +92,27 @@ def stock_overall_score(stock_scoring):
 
 
 def stock_scoring(fundamentals):
-    stock_score = {
-        'debt_to_equity': [calculate_score_lower_than(fundamentals['debt_to_equity'], 1, 1.5, 2, 3, 4), 3],
-        'f_score': [calculate_score_higher_than(fundamentals['f_score'], 8, 6, 5, 4, 3), 3],
-        'z_score': [calculate_score_higher_than(fundamentals['z_score'], 3, 2.6, 2.0, 1.8, 1.5), 3],
-        'roe': [calculate_score_higher_than(fundamentals['roe'], 17, 14.5, 12, 9, 6), 3],
-        # EPS placeholder - need to decide if I want to score based on if it's growing yoy
-        'dividend_yield': [calculate_score_higher_than(fundamentals['dividend_yield'], 4, 3, 2, 2.5, 1), 2],
-        'payout_ratio': [calculate_score_lower_than(fundamentals['payout_ratio'], 0.4, 0.5, 0.6, 0.7, 0.9), 2],
-        'pe_ratio': [calculate_score_lower_than(fundamentals['pe_ratio'], 15, 20, 25, 30, 40), 3],
-        'peg_ratio': [calculate_score_lower_than(fundamentals['peg_ratio'], 0.8, 1, 1.3, 1.6, 2), 2],
-        # PS ratio - score based on what? not possible to score based on absolute values
-        'pb_ratio': [calculate_score_lower_than(fundamentals['pb_ratio'], 1.5, 2, 2.5, 3, 3.5), 2],
-        'pfcf_ratio': [calculate_score_lower_than(fundamentals['pfcf_ratio'], 10, 15, 20, 25, 30), 2],
-        'quick_ratio': [calculate_score_higher_than(fundamentals['quick_ratio'], 1.0, 0.8, 0.6, 0.4, 0.3), 2],
-        'current_ratio': [calculate_score_higher_than(fundamentals['current_ratio'], 1.5, 1.25, 1, 0.75, 0.5), 2],
-        'pe_ratio_median': [calculate_score_lower_than(fundamentals['pe_ratio_median'], 15, 20, 25, 30, 40), 3],
-        'roe_median': [calculate_score_higher_than(fundamentals['roe_median'], 17, 14.5, 12, 9, 6), 3],
-        'payout_ratio_median': [calculate_score_lower_than(fundamentals['payout_ratio_median'], 0.4, 0.5, 0.6, 0.7, 0.9), 2],
+    c = ConfigParser()
+    c.read('roi_calculator/values/scoring.ini')
 
+    stock_score = {
+        'debt_to_equity': [calculate_score_lower_than(fundamentals['debt_to_equity'], c.getfloat('debt_to_equity', 'bm1'), c.getfloat('debt_to_equity', 'bm2'), c.getfloat('debt_to_equity', 'bm3'), c.getfloat('debt_to_equity', 'bm4'), c.getfloat('debt_to_equity', 'bm5')), c.getfloat('debt_to_equity', 'weight')],
+        'f_score': [calculate_score_higher_than(fundamentals['f_score'], c.getfloat('f_score', 'bm1'), c.getfloat('f_score', 'bm2'), c.getfloat('f_score', 'bm3'), c.getfloat('f_score', 'bm4'), c.getfloat('f_score', 'bm5')), c.getfloat('f_score', 'weight')],
+        'z_score': [calculate_score_higher_than(fundamentals['z_score'], c.getfloat('z_score', 'bm1'), c.getfloat('z_score', 'bm2'), c.getfloat('z_score', 'bm3'), c.getfloat('z_score', 'bm4'), c.getfloat('z_score', 'bm5')), c.getfloat('z_score', 'weight')],
+        'roe': [calculate_score_higher_than(fundamentals['roe'], c.getfloat('roe', 'bm1'), c.getfloat('roe', 'bm2'), c.getfloat('roe', 'bm3'), c.getfloat('roe', 'bm4'), c.getfloat('roe', 'bm5')), c.getfloat('roe', 'weight')],
+        # EPS placeholder - need to decide if I want to score based on if it's growing yoy
+        'dividend_yield': [calculate_score_higher_than(fundamentals['dividend_yield'], c.getfloat('dividend_yield', 'bm1'), c.getfloat('dividend_yield', 'bm2'), c.getfloat('dividend_yield', 'bm3'), c.getfloat('dividend_yield', 'bm4'), c.getfloat('dividend_yield', 'bm5')), c.getfloat('dividend_yield', 'weight')],
+        'payout_ratio': [calculate_score_lower_than(fundamentals['payout_ratio'], c.getfloat('payout_ratio', 'bm1'), c.getfloat('payout_ratio', 'bm2'), c.getfloat('payout_ratio', 'bm3'), c.getfloat('payout_ratio', 'bm4'), c.getfloat('payout_ratio', 'bm5')), c.getfloat('payout_ratio', 'weight')],
+        'pe_ratio': [calculate_score_lower_than(fundamentals['pe_ratio'], c.getfloat('pe_ratio', 'bm1'), c.getfloat('pe_ratio', 'bm2'), c.getfloat('pe_ratio', 'bm3'), c.getfloat('pe_ratio', 'bm4'), c.getfloat('pe_ratio', 'bm5')), c.getfloat('pe_ratio', 'weight')],
+        'peg_ratio': [calculate_score_lower_than(fundamentals['peg_ratio'], c.getfloat('peg_ratio', 'bm1'), c.getfloat('peg_ratio', 'bm2'), c.getfloat('peg_ratio', 'bm3'), c.getfloat('peg_ratio', 'bm4'), c.getfloat('peg_ratio', 'bm5')), c.getfloat('peg_ratio', 'weight')],
+        # PS ratio - score based on what? not possible to score based on absolute values
+        'pb_ratio': [calculate_score_lower_than(fundamentals['pb_ratio'], c.getfloat('pb_ratio', 'bm1'), c.getfloat('pb_ratio', 'bm2'), c.getfloat('pb_ratio', 'bm3'), c.getfloat('pb_ratio', 'bm4'), c.getfloat('pb_ratio', 'bm5')), c.getfloat('pb_ratio', 'weight')],
+        'pfcf_ratio': [calculate_score_lower_than(fundamentals['pfcf_ratio'], c.getfloat('pfcf_ratio', 'bm1'), c.getfloat('pfcf_ratio', 'bm2'), c.getfloat('pfcf_ratio', 'bm3'), c.getfloat('pfcf_ratio', 'bm4'), c.getfloat('pfcf_ratio', 'bm5')), c.getfloat('pfcf_ratio', 'weight')],
+        'quick_ratio': [calculate_score_higher_than(fundamentals['quick_ratio'], c.getfloat('quick_ratio', 'bm1'), c.getfloat('quick_ratio', 'bm2'), c.getfloat('quick_ratio', 'bm3'), c.getfloat('quick_ratio', 'bm4'), c.getfloat('quick_ratio', 'bm5')), c.getfloat('quick_ratio', 'weight')],
+        'current_ratio': [calculate_score_higher_than(fundamentals['current_ratio'], c.getfloat('current_ratio', 'bm1'), c.getfloat('current_ratio', 'bm2'), c.getfloat('current_ratio', 'bm3'), c.getfloat('current_ratio', 'bm4'), c.getfloat('current_ratio', 'bm5')), c.getfloat('current_ratio', 'weight')],
+        'pe_ratio_median': [calculate_score_lower_than(fundamentals['pe_ratio_median'], c.getfloat('pe_ratio_median', 'bm1'), c.getfloat('pe_ratio_median', 'bm2'), c.getfloat('pe_ratio_median', 'bm3'), c.getfloat('pe_ratio_median', 'bm4'), c.getfloat('pe_ratio_median', 'bm5')), c.getfloat('pe_ratio_median', 'weight')],
+        'roe_median': [calculate_score_higher_than(fundamentals['roe_median'], c.getfloat('roe_median', 'bm1'), c.getfloat('roe_median', 'bm2'), c.getfloat('roe_median', 'bm3'), c.getfloat('roe_median', 'bm4'), c.getfloat('roe_median', 'bm5')), c.getfloat('roe_median', 'weight')],
+        'payout_ratio_median': [calculate_score_lower_than(fundamentals['payout_ratio_median'], c.getfloat('payout_ratio_median', 'bm1'), c.getfloat('payout_ratio_median', 'bm2'), c.getfloat('payout_ratio_median', 'bm3'), c.getfloat('payout_ratio_median', 'bm4'), c.getfloat('payout_ratio_median', 'bm5')), c.getfloat('payout_ratio_median', 'weight')],
     }
     return stock_score
 
