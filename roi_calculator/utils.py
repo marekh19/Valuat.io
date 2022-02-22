@@ -16,6 +16,8 @@ def valuation_dictionary(ticker):
     # BALANCE SHEET
     balance_sheet = ticker.balancesheet
     quarterly_balance_sheet = ticker.quarterly_balancesheet
+    balance_sheet.to_csv('balance_sheet.csv')
+    print(balance_sheet.loc['Total Assets'][1])
     # EARNINGS
     earnings = ticker.earnings
     quarterly_earnings = ticker.quarterly_earnings
@@ -53,7 +55,7 @@ def valuation_dictionary(ticker):
         'data_saved_on': datetime.now(),
         # ratios, earnings, roe
         'peg_ratio': info['pegRatio'],
-        'pfcf_ratio': info['marketCap'] / info['freeCashflow'] if info['freeCashflow'] != None else None,
+        'pfcf_ratio': info['marketCap'] / info['freeCashflow'] if info['freeCashflow'] is not None else None,
         'ps_ratio': info['priceToSalesTrailing12Months'],
         'pb_ratio': info['priceToBook'],
         'ytd_earnings': earnings_last_4_quarters_sum,
@@ -62,16 +64,16 @@ def valuation_dictionary(ticker):
         'pe_ratio_median': pe_ratio_4_yrs_median,
         'roe': current_roe,
         'roe_median': roe_4_yrs_median,
-        'debt_to_equity': info['debtToEquity'] / H if info['debtToEquity'] != None else None,
+        'debt_to_equity': info['debtToEquity'] / H if info['debtToEquity'] is not None else None,
         'quick_ratio': info['quickRatio'],
         'current_ratio': info['currentRatio'],
         'tse': total_stockholders_equity_in_mil,
         'tse_original': total_stockholders_equity_in_mil * M,
         'tse_per_share': tse_per_share,
         # dividends
-        'dividend_yield': info['dividendYield'] * H if info['dividendYield'] != None else None,
+        'dividend_yield': info['dividendYield'] * H if info['dividendYield'] is not None else None,
         'dividend_value': info['lastDividendValue'],
-        'payout_ratio': info['payoutRatio'],
+        'payout_ratio': info['payoutRatio'] if info['dividendYield'] is not None else None,
         'payout_ratio_median': payout_ratio_4_yrs_median,
         'ex_divi_date': info['exDividendDate'],
         # scores
@@ -102,7 +104,7 @@ def stock_scoring(fundamentals):
         'roe': [calculate_score_higher_than(fundamentals['roe'], c.getfloat('roe', 'bm1'), c.getfloat('roe', 'bm2'), c.getfloat('roe', 'bm3'), c.getfloat('roe', 'bm4'), c.getfloat('roe', 'bm5')), c.getfloat('roe', 'weight')],
         # EPS placeholder - need to decide if I want to score based on if it's growing yoy
         'dividend_yield': [calculate_score_higher_than(fundamentals['dividend_yield'], c.getfloat('dividend_yield', 'bm1'), c.getfloat('dividend_yield', 'bm2'), c.getfloat('dividend_yield', 'bm3'), c.getfloat('dividend_yield', 'bm4'), c.getfloat('dividend_yield', 'bm5')), c.getfloat('dividend_yield', 'weight')],
-        'payout_ratio': [calculate_score_lower_than(fundamentals['payout_ratio'], c.getfloat('payout_ratio', 'bm1'), c.getfloat('payout_ratio', 'bm2'), c.getfloat('payout_ratio', 'bm3'), c.getfloat('payout_ratio', 'bm4'), c.getfloat('payout_ratio', 'bm5')), c.getfloat('payout_ratio', 'weight')],
+        'payout_ratio': [calculate_score_lower_than(fundamentals['payout_ratio'], c.getfloat('payout_ratio', 'bm1'), c.getfloat('payout_ratio', 'bm2'), c.getfloat('payout_ratio', 'bm3'), c.getfloat('payout_ratio', 'bm4'), c.getfloat('payout_ratio', 'bm5')), c.getfloat('payout_ratio', 'weight')] if fundamentals['dividend_yield'] is not None else [0, c.getfloat('payout_ratio', 'weight')],
         'pe_ratio': [calculate_score_lower_than(fundamentals['pe_ratio'], c.getfloat('pe_ratio', 'bm1'), c.getfloat('pe_ratio', 'bm2'), c.getfloat('pe_ratio', 'bm3'), c.getfloat('pe_ratio', 'bm4'), c.getfloat('pe_ratio', 'bm5')), c.getfloat('pe_ratio', 'weight')],
         'peg_ratio': [calculate_score_lower_than(fundamentals['peg_ratio'], c.getfloat('peg_ratio', 'bm1'), c.getfloat('peg_ratio', 'bm2'), c.getfloat('peg_ratio', 'bm3'), c.getfloat('peg_ratio', 'bm4'), c.getfloat('peg_ratio', 'bm5')), c.getfloat('peg_ratio', 'weight')],
         # PS ratio - score based on what? not possible to score based on absolute values
@@ -273,8 +275,16 @@ def higher_gross_margin_than_prev_year(ticker):
 def higher_asset_turnover_ration_than_prev_year(ticker):
     e = ticker.earnings
     bs = ticker.balancesheet
-    current_year = e.iloc[-1]['Revenue'] / ((bs.loc['Total Assets'][0] + bs.loc['Total Assets'][1]) / 2)
-    prev_year = e.iloc[-2]['Revenue'] / ((bs.loc['Total Assets'][1] + bs.loc['Total Assets'][2]) / 2)
+    try:
+        current_year_total_assets = ((bs.loc['Total Assets'][0] + bs.loc['Total Assets'][1]) / 2)
+    except IndexError:
+        current_year_total_assets = bs.loc['Total Assets'][0]
+    try:
+        prev_year_total_assets = ((bs.loc['Total Assets'][1] + bs.loc['Total Assets'][2]) / 2)
+    except IndexError:
+        prev_year_total_assets = bs.loc['Total Assets'][1]
+    current_year = e.iloc[-1]['Revenue'] / current_year_total_assets
+    prev_year = e.iloc[-2]['Revenue'] / prev_year_total_assets
     return current_year > prev_year
 # endregion Piotroski F Score
 
