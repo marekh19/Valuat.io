@@ -6,12 +6,17 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <!-- Bootstrap CSS start -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <!-- Bootstrap CSS end -->
-    <link href="{%  static  'css/style.css'  %}" rel="stylesheet">
+    <!-- Dracula UI start -->
+    <link rel="stylesheet" href="{% static 'node_modules/@dracula/dracula-ui/styles/dracula-ui.css' %}">
+    <!-- Dracula UI end -->
+    <!-- My own CSS start -->
+    <link rel="stylesheet" href="{%  static  'css/style.css'  %}">
+    <!-- My own CSS end -->
+    <!-- Favicons start -->
     <link rel="apple-touch-icon" sizes="180x180" href="{% static  'favicons/apple-touch-icon.png'  %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static  'favicons/favicon-32x32.png'  %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static  'favicons/favicon-16x16.png'  %}">
@@ -19,27 +24,92 @@
     <link rel="mask-icon" href="{% static  'favicons/safari-pinned-tab.svg'  %}" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#282a36">
+    <!-- Favicons end -->
 
-    <title> Valuat.io</title>
+    <title>Valuat.io</title>
 </head>
 
-<body class="d-flex justify-content-center align-items-center vh-100 jb-mono">
-    <main class="container">
+<body class="d-flex flex-column justify-content-center align-items-center vh-100 jb-mono drac-bg-black">
+    <main class="container d-flex justify-content-center align-items-center grow">
         <div class="row">
             <div class="text-center">
-                <h1 class="mb-5">Valuat.io</h1>
-                <h4>Enter a ticker and see expected future performance</h4>
+                <img class="img-fluid mb-5 main-logo" src="{% static 'img/logo_main.png' %}">
+                <h5 class="drac-text-white">Enter a ticker and see expected future performance</h5>
             </div>
-            <div class="m-auto text-center mt-5">
+            <div class="drac-text-white m-auto text-center mt-4">
                 <form method="post">
                     {% csrf_token %}
                     {{ form }}
-                    <button type="submit" class="btn btn-dark btn-lg ms-2">Analyze</button>
+                    <button type="submit" class="drac-btn drac-bg-green drac-text-black drac-m-sm">Analyze</button>
                 </form>
             </div>
         </div>
     </main>
-
+    <footer class="drac-text-white container-fluid">
+        <div class="container my-3">
+            <div class="d-flex justify-content-around align-items-center mb-3">
+                <div>
+                    <!-- Changelog modal start -->
+                    <!-- Anchor trigger modal -->
+                    <a class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono pointer"
+                        data-bs-toggle="modal" data-bs-target="#changelogModal">
+                        Changelog
+                    </a>
+                    <!-- Modal -->
+                    <div class="modal fade" id="changelogModal" tabindex="-1" aria-labelledby="changelogModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content drac-bg-black">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="changelogModalLabel">Changelog</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    ...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Changelog modal end -->
+                <!-- Disclaimer modal start -->
+                <div>
+                    <!-- Anchor trigger modal -->
+                    <a class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono pointer"
+                        data-bs-toggle="modal" data-bs-target="#disclaimerModal">
+                        Disclaimer
+                    </a>
+                    <!-- Modal -->
+                    <div class="modal fade" id="disclaimerModal" tabindex="-1" aria-labelledby="disclaimerModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content drac-bg-black">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="disclaimerModalLabel">Disclaimer</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    ...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Disclaimer modal end -->
+                <div><a href="https://github.com/marekh19/Valuat.io"
+                        class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono"
+                        target="blank">Github</a></div>
+            </div>
+            <div class="d-flex justify-content-center align-items-center">
+                © 2022&nbsp;<a href="/"
+                    class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono">Valuat.io</a>&nbsp;by&nbsp;
+                <a href="https://github.com/marekh19" target="blank"
+                    class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono">Marek Honzal</a>
+            </div>
+        </div>
+    </footer>
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">

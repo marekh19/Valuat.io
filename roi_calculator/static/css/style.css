@@ -1,5 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,200;0,400;0,600;0,800;1,200;1,400;1,600;1,800&display=swap');
 
+/* GLOBAL -- font */
 .jb-mono {
     font-family: 'JetBrains Mono', monospace;
+}
+
+/* HOMEPAGE -- logo */
+.main-logo {
+    max-width: 40%;
+}
+
+.center {
+    text-align: center;
+}
+
+.grow {
+    flex-grow: 1;
+}
+
+.shrink {
+    flex-shrink: 0;
+}
+
+.pointer {
+    cursor: pointer;
 }
