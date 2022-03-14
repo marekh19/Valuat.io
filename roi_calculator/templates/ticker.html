@@ -125,16 +125,18 @@
                             <tbody>
                                 <tr>
                                     <td>D/E:</td>
-                                    <td class="text-end fw-bold">
+                                    <td class="text-end fw-bold {{ score.debt_to_equity.0.1 }}">
                                         &#9632;&nbsp;{{ fundamentals.debt_to_equity|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
                                     <td>F-Score:</td>
-                                    <td class="text-end fw-bold">&#9632;&nbsp;{{ fundamentals.f_score }}</td>
+                                    <td class="text-end fw-bold {{ score.f_score.0.1 }}">
+                                        &#9632;&nbsp;{{ fundamentals.f_score }}</td>
                                 </tr>
                                 <tr>
                                     <td>Z-Score:</td>
-                                    <td class="text-end fw-bold">&#9632;&nbsp;{{ fundamentals.z_score|floatformat:2 }}
+                                    <td class="text-end fw-bold {{ score.z_score.0.1 }}">
+                                        &#9632;&nbsp;{{ fundamentals.z_score|floatformat:2 }}
                                     </td>
                                 </tr>
                                 <tr>
@@ -150,7 +152,7 @@
                             <tbody>
                                 <tr>
                                     <td>ROE:</td>
-                                    <td class="text-end fw-bold">
+                                    <td class="text-end fw-bold {{ score.roe.0.1 }}">
                                         &#9632;&nbsp;{{ fundamentals.roe|2decimal_percentage_divided_by_100 }}</td>
                                 </tr>
                                 <tr>
@@ -171,13 +173,13 @@
                                 </tr>
                                 <tr>
                                     <td>Dividend yield:</td>
-                                    <td class="text-end fw-bold">
+                                    <td class="text-end fw-bold {{ score.dividend_yield.0.1 }}">
                                         &#9632;&nbsp;{{ fundamentals.dividend_yield|2decimal_percentage_divided_by_100 }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Payout ratio:</td>
-                                    <td class="text-end fw-bold">
+                                    <td class="text-end fw-bold {{ score.payout_ratio.0.1 }}">
                                         &#9632;&nbsp;{{ fundamentals.payout_ratio|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
@@ -194,37 +196,41 @@
                             <tbody>
                                 <tr>
                                     <td>PE:</td>
-                                    <td class="text-end fw-bold">&#9632;&nbsp;{{ fundamentals.pe_ratio|floatformat:2 }}
+                                    <td class="text-end fw-bold {{ score.pe_ratio.0.1 }}">
+                                        &#9632;&nbsp;{{ fundamentals.pe_ratio|floatformat:2 }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>PEG:</td>
-                                    <td class="text-end fw-bold">&#9632;&nbsp;{{ fundamentals.peg_ratio|floatformat:2 }}
+                                    <td class="text-end fw-bold {{ score.peg_ratio.0.1 }}">
+                                        &#9632;&nbsp;{{ fundamentals.peg_ratio|floatformat:2 }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>PS:</td>
-                                    <td class="text-end fw-bold">&#9632;&nbsp;{{ fundamentals.ps_ratio|floatformat:2 }}
+                                    <td class="text-end fw-bold {{ score.ps_ratio.0.1 }}">
+                                        &#9632;&nbsp;{{ fundamentals.ps_ratio|floatformat:2 }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>PB:</td>
-                                    <td class="text-end fw-bold">&#9632;&nbsp;{{ fundamentals.pb_ratio|floatformat:2 }}
+                                    <td class="text-end fw-bold {{ score.pb_ratio.0.1 }}">
+                                        &#9632;&nbsp;{{ fundamentals.pb_ratio|floatformat:2 }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>P/FCF:</td>
-                                    <td class="text-end fw-bold">
+                                    <td class="text-end fw-bold {{ score.pfcf_ratio.0.1 }}">
                                         &#9632;&nbsp;{{ fundamentals.pfcf_ratio|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
                                     <td>Quick ratio:</td>
-                                    <td class="text-end fw-bold">
+                                    <td class="text-end fw-bold {{ score.quick_ratio.0.1 }}">
                                         &#9632;&nbsp;{{ fundamentals.quick_ratio|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
                                     <td>Current ratio:</td>
-                                    <td class="text-end fw-bold">
+                                    <td class="text-end fw-bold {{ score.current_ratio.0.1 }}">
                                         &#9632;&nbsp;{{ fundamentals.current_ratio|floatformat:2 }}</td>
                                 </tr>
                             </tbody>
@@ -236,15 +242,9 @@
             {% comment %} SCORING START {% endcomment %}
             <div class="container mb-5">
                 <div class="row">
-                    <div class="col-md-6">
-                        <h4 class="text-center">Score:&nbsp;<span
-                                class="fw-bold">&#9632;&nbsp;{{ overall_score|2decimal_percentage_divided_by_100 }}</span>
-                        </h4>
-                    </div>
-                    <div class="col-md-6">
-                        <h4 class="text-center">Peter&nbsp;Lynch&nbsp;Fair&nbsp;Value:&nbsp;<span
-                                class="fw-bold">XXX.XX&nbsp;{{ fundamentals.currency }}</span></h4>
-                    </div>
+                    <h4 class="text-center">Score:&nbsp;<span
+                            class="fw-bold">&#9632;&nbsp;{{ overall_score|2decimal_percentage_divided_by_100 }}</span>
+                    </h4>
                 </div>
             </div>
             {% comment %} SCORING END {% endcomment %}
@@ -257,18 +257,18 @@
                             <tbody>
                                 <tr>
                                     <td>PE (4y median):</td>
-                                    <td class="text-end fw-bold">
+                                    <td class="text-end fw-bold {{ score.pe_ratio_median.0.1 }}">
                                         &#9632;&nbsp;{{ fundamentals.pe_ratio_median|floatformat:2 }}</td>
                                 </tr>
                                 <tr>
                                     <td>ROE (4y median):</td>
-                                    <td class="text-end fw-bold">
+                                    <td class="text-end fw-bold {{ score.roe_median.0.1 }}">
                                         &#9632;&nbsp;{{ fundamentals.roe_median|2decimal_percentage_divided_by_100 }}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Payout ratio (4y median):</td>
-                                    <td class="text-end fw-bold">
+                                    <td class="text-end fw-bold {{ score.payout_ratio_median.0.1 }}">
                                         &#9632;&nbsp;{{ fundamentals.payout_ratio_median|floatformat:2 }}</td>
                                 </tr>
                                 <tr>

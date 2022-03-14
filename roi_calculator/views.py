@@ -22,12 +22,14 @@ def ticker_view(request, ticker):
         roi = return_on_investment(fundamentals, overview)
         form = TickerFormSmall()
         overall_score = stock_overall_score(stock_scoring(fundamentals))
+        score = stock_scoring(fundamentals)
         context = {
             'fundamentals': fundamentals,
             '7yrs': overview,
             'roi': roi,
             'form': form,
             'overall_score': overall_score,
+            'score': score,
             # 'candlestick': candlestick(ticker),
         }
         return render(request, 'ticker.html', context)

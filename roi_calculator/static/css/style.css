@@ -29,3 +29,28 @@
 .pointer {
     cursor: pointer;
 }
+
+/* Valuation colors -- logo */
+.score-100 {
+    color: #50fa7b;
+}
+
+.score-80 {
+    color: #A1FA84;
+}
+
+.score-60 {
+    color: #f1fa8c;
+}
+
+.score-40 {
+    color: #ffb86c;
+}
+
+.score-20 {
+    color: #ff5555;
+}
+
+.score-na {
+    color: #f8f8f2;
+}

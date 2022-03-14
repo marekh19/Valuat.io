@@ -17,7 +17,6 @@ def valuation_dictionary(ticker):
     balance_sheet = ticker.balancesheet
     quarterly_balance_sheet = ticker.quarterly_balancesheet
     balance_sheet.to_csv('balance_sheet.csv')
-    print(balance_sheet.loc['Total Assets'][1])
     # EARNINGS
     earnings = ticker.earnings
     quarterly_earnings = ticker.quarterly_earnings
@@ -88,7 +87,7 @@ def stock_overall_score(stock_scoring):
     total = 0
     num_of_elements_weighted = 0
     for key in stock_scoring:
-        total += stock_scoring[key][0] * stock_scoring[key][1]
+        total += stock_scoring[key][0][0] * stock_scoring[key][1]
         num_of_elements_weighted += stock_scoring[key][1]
     return total / num_of_elements_weighted
 
@@ -98,61 +97,61 @@ def stock_scoring(fundamentals):
     c.read('roi_calculator/values/scoring.ini')
 
     stock_score = {
-        'debt_to_equity': [calculate_score_lower_than(fundamentals['debt_to_equity'], c.getfloat('debt_to_equity', 'bm1'), c.getfloat('debt_to_equity', 'bm2'), c.getfloat('debt_to_equity', 'bm3'), c.getfloat('debt_to_equity', 'bm4'), c.getfloat('debt_to_equity', 'bm5')), c.getfloat('debt_to_equity', 'weight')],
-        'f_score': [calculate_score_higher_than(fundamentals['f_score'], c.getfloat('f_score', 'bm1'), c.getfloat('f_score', 'bm2'), c.getfloat('f_score', 'bm3'), c.getfloat('f_score', 'bm4'), c.getfloat('f_score', 'bm5')), c.getfloat('f_score', 'weight')],
-        'z_score': [calculate_score_higher_than(fundamentals['z_score'], c.getfloat('z_score', 'bm1'), c.getfloat('z_score', 'bm2'), c.getfloat('z_score', 'bm3'), c.getfloat('z_score', 'bm4'), c.getfloat('z_score', 'bm5')), c.getfloat('z_score', 'weight')],
-        'roe': [calculate_score_higher_than(fundamentals['roe'], c.getfloat('roe', 'bm1'), c.getfloat('roe', 'bm2'), c.getfloat('roe', 'bm3'), c.getfloat('roe', 'bm4'), c.getfloat('roe', 'bm5')), c.getfloat('roe', 'weight')],
+        'debt_to_equity': (calculate_score_lower_than(fundamentals['debt_to_equity'], c.getfloat('debt_to_equity', 'bm1'), c.getfloat('debt_to_equity', 'bm2'), c.getfloat('debt_to_equity', 'bm3'), c.getfloat('debt_to_equity', 'bm4'), c.getfloat('debt_to_equity', 'bm5')), c.getfloat('debt_to_equity', 'weight')),
+        'f_score': (calculate_score_higher_than(fundamentals['f_score'], c.getfloat('f_score', 'bm1'), c.getfloat('f_score', 'bm2'), c.getfloat('f_score', 'bm3'), c.getfloat('f_score', 'bm4'), c.getfloat('f_score', 'bm5')), c.getfloat('f_score', 'weight')),
+        'z_score': (calculate_score_higher_than(fundamentals['z_score'], c.getfloat('z_score', 'bm1'), c.getfloat('z_score', 'bm2'), c.getfloat('z_score', 'bm3'), c.getfloat('z_score', 'bm4'), c.getfloat('z_score', 'bm5')), c.getfloat('z_score', 'weight')),
+        'roe': (calculate_score_higher_than(fundamentals['roe'], c.getfloat('roe', 'bm1'), c.getfloat('roe', 'bm2'), c.getfloat('roe', 'bm3'), c.getfloat('roe', 'bm4'), c.getfloat('roe', 'bm5')), c.getfloat('roe', 'weight')),
         # EPS placeholder - need to decide if I want to score based on if it's growing yoy
-        'dividend_yield': [calculate_score_higher_than(fundamentals['dividend_yield'], c.getfloat('dividend_yield', 'bm1'), c.getfloat('dividend_yield', 'bm2'), c.getfloat('dividend_yield', 'bm3'), c.getfloat('dividend_yield', 'bm4'), c.getfloat('dividend_yield', 'bm5')), c.getfloat('dividend_yield', 'weight')],
-        'payout_ratio': [calculate_score_lower_than(fundamentals['payout_ratio'], c.getfloat('payout_ratio', 'bm1'), c.getfloat('payout_ratio', 'bm2'), c.getfloat('payout_ratio', 'bm3'), c.getfloat('payout_ratio', 'bm4'), c.getfloat('payout_ratio', 'bm5')), c.getfloat('payout_ratio', 'weight')] if fundamentals['dividend_yield'] is not None else [0, c.getfloat('payout_ratio', 'weight')],
-        'pe_ratio': [calculate_score_lower_than(fundamentals['pe_ratio'], c.getfloat('pe_ratio', 'bm1'), c.getfloat('pe_ratio', 'bm2'), c.getfloat('pe_ratio', 'bm3'), c.getfloat('pe_ratio', 'bm4'), c.getfloat('pe_ratio', 'bm5')), c.getfloat('pe_ratio', 'weight')],
-        'peg_ratio': [calculate_score_lower_than(fundamentals['peg_ratio'], c.getfloat('peg_ratio', 'bm1'), c.getfloat('peg_ratio', 'bm2'), c.getfloat('peg_ratio', 'bm3'), c.getfloat('peg_ratio', 'bm4'), c.getfloat('peg_ratio', 'bm5')), c.getfloat('peg_ratio', 'weight')],
+        'dividend_yield': (calculate_score_higher_than(fundamentals['dividend_yield'], c.getfloat('dividend_yield', 'bm1'), c.getfloat('dividend_yield', 'bm2'), c.getfloat('dividend_yield', 'bm3'), c.getfloat('dividend_yield', 'bm4'), c.getfloat('dividend_yield', 'bm5')), c.getfloat('dividend_yield', 'weight')),
+        'payout_ratio': (calculate_score_lower_than(fundamentals['payout_ratio'], c.getfloat('payout_ratio', 'bm1'), c.getfloat('payout_ratio', 'bm2'), c.getfloat('payout_ratio', 'bm3'), c.getfloat('payout_ratio', 'bm4'), c.getfloat('payout_ratio', 'bm5')), c.getfloat('payout_ratio', 'weight')) if fundamentals['dividend_yield'] is not None else ((0, 'score-na'), c.getfloat('payout_ratio', 'weight')),
+        'pe_ratio': (calculate_score_lower_than(fundamentals['pe_ratio'], c.getfloat('pe_ratio', 'bm1'), c.getfloat('pe_ratio', 'bm2'), c.getfloat('pe_ratio', 'bm3'), c.getfloat('pe_ratio', 'bm4'), c.getfloat('pe_ratio', 'bm5')), c.getfloat('pe_ratio', 'weight')),
+        'peg_ratio': (calculate_score_lower_than(fundamentals['peg_ratio'], c.getfloat('peg_ratio', 'bm1'), c.getfloat('peg_ratio', 'bm2'), c.getfloat('peg_ratio', 'bm3'), c.getfloat('peg_ratio', 'bm4'), c.getfloat('peg_ratio', 'bm5')), c.getfloat('peg_ratio', 'weight')),
         # PS ratio - score based on what? not possible to score based on absolute values
-        'pb_ratio': [calculate_score_lower_than(fundamentals['pb_ratio'], c.getfloat('pb_ratio', 'bm1'), c.getfloat('pb_ratio', 'bm2'), c.getfloat('pb_ratio', 'bm3'), c.getfloat('pb_ratio', 'bm4'), c.getfloat('pb_ratio', 'bm5')), c.getfloat('pb_ratio', 'weight')],
-        'pfcf_ratio': [calculate_score_lower_than(fundamentals['pfcf_ratio'], c.getfloat('pfcf_ratio', 'bm1'), c.getfloat('pfcf_ratio', 'bm2'), c.getfloat('pfcf_ratio', 'bm3'), c.getfloat('pfcf_ratio', 'bm4'), c.getfloat('pfcf_ratio', 'bm5')), c.getfloat('pfcf_ratio', 'weight')],
-        'quick_ratio': [calculate_score_higher_than(fundamentals['quick_ratio'], c.getfloat('quick_ratio', 'bm1'), c.getfloat('quick_ratio', 'bm2'), c.getfloat('quick_ratio', 'bm3'), c.getfloat('quick_ratio', 'bm4'), c.getfloat('quick_ratio', 'bm5')), c.getfloat('quick_ratio', 'weight')],
-        'current_ratio': [calculate_score_higher_than(fundamentals['current_ratio'], c.getfloat('current_ratio', 'bm1'), c.getfloat('current_ratio', 'bm2'), c.getfloat('current_ratio', 'bm3'), c.getfloat('current_ratio', 'bm4'), c.getfloat('current_ratio', 'bm5')), c.getfloat('current_ratio', 'weight')],
-        'pe_ratio_median': [calculate_score_lower_than(fundamentals['pe_ratio_median'], c.getfloat('pe_ratio_median', 'bm1'), c.getfloat('pe_ratio_median', 'bm2'), c.getfloat('pe_ratio_median', 'bm3'), c.getfloat('pe_ratio_median', 'bm4'), c.getfloat('pe_ratio_median', 'bm5')), c.getfloat('pe_ratio_median', 'weight')],
-        'roe_median': [calculate_score_higher_than(fundamentals['roe_median'], c.getfloat('roe_median', 'bm1'), c.getfloat('roe_median', 'bm2'), c.getfloat('roe_median', 'bm3'), c.getfloat('roe_median', 'bm4'), c.getfloat('roe_median', 'bm5')), c.getfloat('roe_median', 'weight')],
-        'payout_ratio_median': [calculate_score_lower_than(fundamentals['payout_ratio_median'], c.getfloat('payout_ratio_median', 'bm1'), c.getfloat('payout_ratio_median', 'bm2'), c.getfloat('payout_ratio_median', 'bm3'), c.getfloat('payout_ratio_median', 'bm4'), c.getfloat('payout_ratio_median', 'bm5')), c.getfloat('payout_ratio_median', 'weight')],
+        'pb_ratio': (calculate_score_lower_than(fundamentals['pb_ratio'], c.getfloat('pb_ratio', 'bm1'), c.getfloat('pb_ratio', 'bm2'), c.getfloat('pb_ratio', 'bm3'), c.getfloat('pb_ratio', 'bm4'), c.getfloat('pb_ratio', 'bm5')), c.getfloat('pb_ratio', 'weight')),
+        'pfcf_ratio': (calculate_score_lower_than(fundamentals['pfcf_ratio'], c.getfloat('pfcf_ratio', 'bm1'), c.getfloat('pfcf_ratio', 'bm2'), c.getfloat('pfcf_ratio', 'bm3'), c.getfloat('pfcf_ratio', 'bm4'), c.getfloat('pfcf_ratio', 'bm5')), c.getfloat('pfcf_ratio', 'weight')),
+        'quick_ratio': (calculate_score_higher_than(fundamentals['quick_ratio'], c.getfloat('quick_ratio', 'bm1'), c.getfloat('quick_ratio', 'bm2'), c.getfloat('quick_ratio', 'bm3'), c.getfloat('quick_ratio', 'bm4'), c.getfloat('quick_ratio', 'bm5')), c.getfloat('quick_ratio', 'weight')),
+        'current_ratio': (calculate_score_higher_than(fundamentals['current_ratio'], c.getfloat('current_ratio', 'bm1'), c.getfloat('current_ratio', 'bm2'), c.getfloat('current_ratio', 'bm3'), c.getfloat('current_ratio', 'bm4'), c.getfloat('current_ratio', 'bm5')), c.getfloat('current_ratio', 'weight')),
+        'pe_ratio_median': (calculate_score_lower_than(fundamentals['pe_ratio_median'], c.getfloat('pe_ratio_median', 'bm1'), c.getfloat('pe_ratio_median', 'bm2'), c.getfloat('pe_ratio_median', 'bm3'), c.getfloat('pe_ratio_median', 'bm4'), c.getfloat('pe_ratio_median', 'bm5')), c.getfloat('pe_ratio_median', 'weight')),
+        'roe_median': (calculate_score_higher_than(fundamentals['roe_median'], c.getfloat('roe_median', 'bm1'), c.getfloat('roe_median', 'bm2'), c.getfloat('roe_median', 'bm3'), c.getfloat('roe_median', 'bm4'), c.getfloat('roe_median', 'bm5')), c.getfloat('roe_median', 'weight')),
+        'payout_ratio_median': (calculate_score_lower_than(fundamentals['payout_ratio_median'], c.getfloat('payout_ratio_median', 'bm1'), c.getfloat('payout_ratio_median', 'bm2'), c.getfloat('payout_ratio_median', 'bm3'), c.getfloat('payout_ratio_median', 'bm4'), c.getfloat('payout_ratio_median', 'bm5')), c.getfloat('payout_ratio_median', 'weight')),
     }
+    for key in stock_score:
+        print(f'fundament: {key} \t\t>>>\t\t score: {stock_score[key]} \t\t>>>\t\t value: {fundamentals[key]}')
     return stock_score
 
 
 def calculate_score_lower_than(value, bm1, bm2, bm3, bm4, bm5):
-    if value == None:
-        value = 0
-    if value < 0:
-        return 0
+    if value == None or value <= 0:
+        return (0, 'score-na')
     if value <= bm1:
-        return 100
+        return (100, 'score-100')
     if value <= bm2:
-        return 80
+        return (80, 'score-80')
     if value <= bm3:
-        return 60
+        return (60, 'score-60')
     if value <= bm4:
-        return 40
+        return (40, 'score-40')
     if value <= bm5:
-        return 20
+        return (20, 'score-20')
     if value > bm5:
-        return 0
+        return (0, 'score-na')
 
 
 def calculate_score_higher_than(value, bm1, bm2, bm3, bm4, bm5):
     if value == None:
-        value = 0
+        return (0, 'score-na')
     if value >= bm1:
-        return 100
+        return (100, 'score-100')
     if value >= bm2:
-        return 80
+        return (80, 'score-80')
     if value >= bm3:
-        return 60
+        return (60, 'score-60')
     if value >= bm4:
-        return 40
+        return (40, 'score-40')
     if value >= bm5:
-        return 20
+        return (20, 'score-20')
     if value < bm5:
-        return 0
+        return (0, 'score-na')
 # endregion Stock Scoring Model
 
 # region Altman Z Score
