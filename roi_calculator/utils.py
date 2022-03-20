@@ -448,12 +448,12 @@ def return_on_investment(fundamentals, overview):
     }
 
 
-# def candlestick(ticker):
-#     df = ticker.history(period="5y")
-#     fig = go.Figure(data=[go.Candlestick(x=df.index,
-#                                          open=df['Open'],
-#                                          high=df['High'],
-#                                          low=df['Low'],
-#                                          close=df['Close'])])
-#     candlestick_div = plot(fig, output_type='div')
-#     return candlestick_div
+def candlestick(ticker):
+    df = ticker.history(period="5y")
+    fig = go.Figure(data=[go.Candlestick(x=df.index,
+                                         open=df['Open'],
+                                         high=df['High'],
+                                         low=df['Low'],
+                                         close=df['Close'])])
+    candlestick_div = plot(fig, output_type='div')
+    return candlestick_div

@@ -29,14 +29,14 @@
     <title>Valuat.io</title>
 </head>
 
-<body class="d-flex flex-column justify-content-center align-items-center vh-100 jb-mono drac-bg-black">
+<body class="d-flex flex-column justify-content-center align-items-center jb-mono drac-bg-black">
     <main class="container d-flex justify-content-center align-items-center grow">
         <div class="row">
             <div class="text-center">
                 <img class="img-fluid mb-5 main-logo" src="{% static 'img/logo_main.png' %}" alt="Valuat.io logo">
                 <h5 class="drac-text-white">Enter a ticker and see expected future performance</h5>
             </div>
-            <div class="drac-text-white m-auto text-center mt-4">
+            <div class="drac-text-white text-center mt-4">
                 <form method="post">
                     {% csrf_token %}
                     {{ form }}
@@ -47,67 +47,74 @@
     </main>
     <footer class="drac-text-white container-fluid">
         <div class="container my-3">
-            <div class="d-flex justify-content-around align-items-center mb-3">
-                <div>
-                    <!-- Changelog modal start -->
-                    <!-- Anchor trigger modal -->
-                    <a class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono pointer"
-                        data-bs-toggle="modal" data-bs-target="#changelogModal">
-                        Changelog
-                    </a>
-                    <!-- Modal -->
-                    <div class="modal fade" id="changelogModal" tabindex="-1" aria-labelledby="changelogModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content drac-bg-black">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="changelogModalLabel">Changelog</h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
+            <div class="mb-2">
+                <div class="row">
+                    <div class="col-sm d-flex justify-content-around mb-2">
+                        <div>
+                            <!-- Changelog modal start -->
+                            <!-- Anchor trigger modal -->
+                            <a class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono pointer"
+                                data-bs-toggle="modal" data-bs-target="#changelogModal">
+                                Changelog
+                            </a>
+                            <!-- Modal -->
+                            <div class="modal fade" id="changelogModal" tabindex="-1"
+                                aria-labelledby="changelogModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content drac-bg-black">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="changelogModalLabel">Changelog</h5>
+                                            <button type="button" class="btn-close btn-close-white"
+                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            ...
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="modal-body">
-                                    ...
+                            </div>
+                        </div>
+                        <!-- Changelog modal end -->
+                        <!-- Disclaimer modal start -->
+                        <div>
+                            <!-- Anchor trigger modal -->
+                            <a class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono pointer"
+                                data-bs-toggle="modal" data-bs-target="#disclaimerModal">
+                                Disclaimer
+                            </a>
+                            <!-- Modal -->
+                            <div class="modal fade" id="disclaimerModal" tabindex="-1"
+                                aria-labelledby="disclaimerModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content drac-bg-black">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="disclaimerModalLabel">Disclaimer</h5>
+                                            <button type="button" class="btn-close btn-close-white"
+                                                data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            ...
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Changelog modal end -->
-                <!-- Disclaimer modal start -->
-                <div>
-                    <!-- Anchor trigger modal -->
-                    <a class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono pointer"
-                        data-bs-toggle="modal" data-bs-target="#disclaimerModal">
-                        Disclaimer
-                    </a>
-                    <!-- Modal -->
-                    <div class="modal fade" id="disclaimerModal" tabindex="-1" aria-labelledby="disclaimerModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content drac-bg-black">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="disclaimerModalLabel">Disclaimer</h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    ...
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Disclaimer modal end -->
+                    <div class="col-sm d-flex justify-content-around mb-2">
+                        <div><a href="https://github.com/marekh19/Valuat.io"
+                                class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono"
+                                target="blank">Github</a></div>
+                        <div><a href="#" class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono"
+                                target="blank">Roadmap</a></div>
                     </div>
                 </div>
-                <!-- Disclaimer modal end -->
-                <div><a href="https://github.com/marekh19/Valuat.io"
-                        class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono"
-                        target="blank">Github</a></div>
-                <div><a href="#"
-                        class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono"
-                        target="blank">Roadmap</a></div>
-                <div><a href="#"
-                        class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono"
-                        target="blank">Donate</a></div>
-
+                <div class="row">
+                    <div class="col d-flex justify-content-around">
+                        <a href="#" class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono"
+                            target="blank">Donate</a>
+                    </div>
+                </div>
             </div>
             <div class="d-flex justify-content-center align-items-center">
                 © 2022&nbsp;<a href="/"

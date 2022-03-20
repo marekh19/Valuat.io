@@ -89,18 +89,20 @@
                             </tbody>
                         </table>
 
-                        <div class="accordion accordion-flush mt-0 mb-0" id="accordionFlushExample">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="flush-headingOne">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#flush-collapseOne" aria-expanded="false"
-                                        aria-controls="flush-collapseOne">
+                        <div class="accordion drac-bg-black drac-text-white mt-0 mb-0" id="accordionFlushExample">
+                            <div class="accordion-item drac-bg-black drac-text-white">
+                                <h2 class="accordion-header drac-bg-black drac-text-white" id="flush-headingOne">
+                                    <button class="accordion-button collapsed drac-bg-black drac-text-white"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne"
+                                        aria-expanded="false" aria-controls="flush-collapseOne">
                                         Business summary:
                                     </button>
                                 </h2>
-                                <div id="flush-collapseOne" class="accordion-collapse collapse"
+                                <div id="flush-collapseOne"
+                                    class="accordion-collapse collapse drac-bg-black drac-text-white"
                                     aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-                                    <div class="accordion-body"> {{ fundamentals.description }} </div>
+                                    <div class="accordion-body drac-bg-black drac-text-white">
+                                        {{ fundamentals.description }} </div>
                                 </div>
                             </div>
                         </div>
@@ -108,8 +110,8 @@
                     <div class="col-md-6">
                         <h4 class="mb-3 text-center">Daily chart</h4>
                         <div class="d-flex justify-content-center align-items-center">
-                            DAILY CHART PLACEHOLDER
-                            {% comment %} {{ candlestick|safe}} {% endcomment %}
+                            {% comment %} DAILY CHART PLACEHOLDER {% endcomment %}
+                            {{ candlestick|safe}}
                         </div>
                     </div>
                 </div>
