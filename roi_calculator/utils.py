@@ -1,14 +1,12 @@
-import yfinance as yf
 from .values.math_constants import THOUSAND as K, MILLION as M, HUNDRED as H
 import statistics
 from datetime import datetime, date
-import plotly.graph_objects as go
-from plotly.offline import plot
 from configparser import ConfigParser
+from plotly.offline import plot
+import plotly.graph_objs as go
 
 
 def valuation_dictionary(ticker):
-    ticker = yf.Ticker(ticker)
     # BASIC INFO
     info = ticker.info
     current_shares_outstanding_in_mil = info['sharesOutstanding'] / M
@@ -449,11 +447,20 @@ def return_on_investment(fundamentals, overview):
 
 
 def candlestick(ticker):
-    df = ticker.history(period="5y")
+    df = ticker.history(period="1y", interval="1d")
     fig = go.Figure(data=[go.Candlestick(x=df.index,
                                          open=df['Open'],
                                          high=df['High'],
                                          low=df['Low'],
-                                         close=df['Close'])])
+                                         close=df['Close'],
+                                         increasing_line_color='#50fa7b', decreasing_line_color='#ff5555'
+                                         )])
+    fig.update_layout(xaxis_rangeslider_visible=False,
+                      plot_bgcolor='#21222C',
+                      paper_bgcolor='#21222C',
+                      autosize=False,
+                      width=350,
+                      height=280
+                      )
     candlestick_div = plot(fig, output_type='div')
     return candlestick_div

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .forms import TickerForm, TickerFormSmall
 from .utils import valuation_dictionary, seven_yrs_overview, return_on_investment, stock_overall_score, stock_scoring, candlestick
+import yfinance as yf
 
 
 def ticker_form(request):
@@ -17,6 +18,7 @@ def ticker_form(request):
 
 def ticker_view(request, ticker):
     if request.method == 'GET':
+        ticker = yf.Ticker(ticker)
         fundamentals = valuation_dictionary(ticker)
         overview = seven_yrs_overview(fundamentals)
         roi = return_on_investment(fundamentals, overview)
