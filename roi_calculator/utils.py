@@ -447,7 +447,7 @@ def return_on_investment(fundamentals, overview):
 
 
 def candlestick(ticker):
-    df = ticker.history(period="1y", interval="1d")
+    df = ticker.history(period="3mo", interval="1d")
     fig = go.Figure(data=[go.Candlestick(x=df.index,
                                          open=df['Open'],
                                          high=df['High'],
@@ -458,9 +458,10 @@ def candlestick(ticker):
     fig.update_layout(xaxis_rangeslider_visible=False,
                       plot_bgcolor='#21222C',
                       paper_bgcolor='#21222C',
-                      autosize=False,
-                      width=350,
-                      height=280
+                      margin=dict(t=50)
                       )
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='#6272a4', color='#f8f8f2')
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='#6272a4', color='#f8f8f2')
+
     candlestick_div = plot(fig, output_type='div')
     return candlestick_div
