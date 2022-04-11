@@ -113,8 +113,7 @@ def stock_scoring(fundamentals):
         'roe_median': (calculate_score_higher_than(fundamentals['roe_median'], c.getfloat('roe_median', 'bm1'), c.getfloat('roe_median', 'bm2'), c.getfloat('roe_median', 'bm3'), c.getfloat('roe_median', 'bm4'), c.getfloat('roe_median', 'bm5')), c.getfloat('roe_median', 'weight')),
         'payout_ratio_median': (calculate_score_lower_than(fundamentals['payout_ratio_median'], c.getfloat('payout_ratio_median', 'bm1'), c.getfloat('payout_ratio_median', 'bm2'), c.getfloat('payout_ratio_median', 'bm3'), c.getfloat('payout_ratio_median', 'bm4'), c.getfloat('payout_ratio_median', 'bm5')), c.getfloat('payout_ratio_median', 'weight')),
     }
-    for key in stock_score:
-        print(f'fundament: {key} \t\t>>>\t\t score: {stock_score[key]} \t\t>>>\t\t value: {fundamentals[key]}')
+    print_score(fundamentals, stock_score)
     return stock_score
 
 
@@ -444,6 +443,15 @@ def return_on_investment(fundamentals, overview):
         'expected_percentage_roi': expected_percentage_roi,
         'expected_yearly_return': expected_yearly_return
     }
+
+
+def print_score(fundamentals, stock_score):
+    print(52*'=')
+    print('fundament'.center(20) + ' | ' + 'value'.center(20) + ' | ' + 'score'.center(6))
+    print(52*'=')
+    for key in stock_score:
+        print(key.rjust(20) + ' | ' + str(fundamentals[key]).rjust(20) +
+              ' | ' + str((stock_score[key][0][0])).rjust(6))
 
 
 def candlestick(ticker):
