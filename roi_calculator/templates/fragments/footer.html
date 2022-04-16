@@ -21,7 +21,7 @@
                                             aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        ...
+                                        {% include "fragments/changelog.html" %}
                                     </div>
                                 </div>
                             </div>
@@ -46,7 +46,7 @@
                                             aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        ...
+                                        {% include "fragments/disclaimer.html" %}
                                     </div>
                                 </div>
                             </div>
@@ -58,22 +58,47 @@
                     <div><a href="https://github.com/marekh19/Valuat.io"
                             class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono"
                             target="blank">Github</a></div>
-                    <div><a href="#" class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono"
+                    <div><a href="https://trello.com/b/Zvti1cm3/valuatio-roadmap"
+                            class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono"
                             target="blank">Roadmap</a></div>
                 </div>
             </div>
             <div class="row">
                 <div class="col d-flex justify-content-around">
-                    <a href="#" class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono"
-                        target="blank">Donate</a>
+                    <!-- Disclaimer modal start -->
+                    <div>
+                        <!-- Anchor trigger modal -->
+                        <a class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono pointer"
+                            data-bs-toggle="modal" data-bs-target="#donateModal">
+                            Donate
+                        </a>
+                        <!-- Modal -->
+                        <div class="modal fade" id="donateModal" tabindex="-1" aria-labelledby="donateModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content drac-bg-black">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="donateModalLabel">Donate</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        {% include "fragments/donate.html" %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                <!-- Disclaimer modal end -->
             </div>
         </div>
-        <div class="d-flex justify-content-center align-items-center">
-            © 2022&nbsp;<a href="/"
-                class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono">Valuat.io</a>&nbsp;by&nbsp;
-            <a href="https://github.com/marekh19" target="blank"
-                class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono">Marek Honzal</a>
-        </div>
+    </div>
+    <div class="d-flex justify-content-center align-items-center">
+        © 2022&nbsp;<a href="/"
+            class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono">Valuat.io</a>&nbsp;by&nbsp;
+        <a href="https://github.com/marekh19" target="blank"
+            class="drac-anchor drac-text drac-text-white drac-text-green--hover jb-mono">Marek Honzal</a>
+    </div>
     </div>
 </footer>

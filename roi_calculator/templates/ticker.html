@@ -35,21 +35,7 @@
         {% load template_filters %}
         {% load humanize %}
         {% comment %} NAV START {% endcomment %}
-        <div class="container-fluid drac-bg-black">
-            <div class="container">
-                <nav class="navbar navbar-dark drac-bg-black justify-content-between">
-                    <a class="navbar-brand" href="/">
-                        <img src="{% static 'img/logo_main.png' %}" alt="Valuat.io logo" width="120">
-                    </a>
-                    <form class="d-flex align-items-center" method="post">
-                        {% csrf_token %}
-                        {{ form }}
-                        <button type="submit"
-                            class="drac-btn drac-bg-green drac-m-sm drac-text-black">Analyze&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-                    </form>
-                </nav>
-            </div>
-        </div>
+        {% include "fragments/nav.html" %}
         {% comment %} NAV END {% endcomment %}
         <div class="d-flex justify-content-center align-items-center">
             <main class="mt-3 w-100">

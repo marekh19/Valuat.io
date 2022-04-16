@@ -15,6 +15,14 @@ html {
     font-family: 'JetBrains Mono', monospace;
 }
 
+.no-underline {
+    text-decoration: none !important;
+}
+
+.wrap-long {
+    overflow-wrap: break-word;
+}
+
 /* HOMEPAGE -- logo */
 .main-logo {
     max-width: 30%;

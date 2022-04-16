@@ -118,7 +118,7 @@ def stock_scoring(fundamentals):
         'roe_median': (calculate_score_higher_than(fundamentals['roe_median'], c.getfloat('roe_median', 'bm1'), c.getfloat('roe_median', 'bm2'), c.getfloat('roe_median', 'bm3'), c.getfloat('roe_median', 'bm4'), c.getfloat('roe_median', 'bm5')), c.getfloat('roe_median', 'weight')),
         'payout_ratio_median': (calculate_score_lower_than(fundamentals['payout_ratio_median'], c.getfloat('payout_ratio_median', 'bm1'), c.getfloat('payout_ratio_median', 'bm2'), c.getfloat('payout_ratio_median', 'bm3'), c.getfloat('payout_ratio_median', 'bm4'), c.getfloat('payout_ratio_median', 'bm5')), c.getfloat('payout_ratio_median', 'weight')),
     }
-    print_score(fundamentals, stock_score)
+    # print_score(fundamentals, stock_score)
     return stock_score
 
 
