@@ -22,16 +22,16 @@ def ticker_view(request, ticker):
         fundamentals = valuation_dictionary(ticker)
         overview = seven_yrs_overview(fundamentals)
         roi = return_on_investment(fundamentals, overview)
+        calculated_stock_scoring = stock_scoring(fundamentals)
+        overall_score = stock_overall_score(calculated_stock_scoring)
         form = TickerFormSmall()
-        overall_score = stock_overall_score(stock_scoring(fundamentals))
-        score = stock_scoring(fundamentals)
         context = {
             'fundamentals': fundamentals,
             '7yrs': overview,
             'roi': roi,
             'form': form,
             'overall_score': overall_score,
-            'score': score,
+            'score': calculated_stock_scoring,
             'candlestick': candlestick(ticker),
         }
         return render(request, 'ticker.html', context)

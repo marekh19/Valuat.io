@@ -87,7 +87,12 @@ def stock_overall_score(stock_scoring):
     for key in stock_scoring:
         total += stock_scoring[key][0][0] * stock_scoring[key][1]
         num_of_elements_weighted += stock_scoring[key][1]
-    return total / num_of_elements_weighted
+    overall_score = total / num_of_elements_weighted
+    tresholds = (80, 60, 40, 20, 0)
+    class_names = ('score-100', 'score-80', 'score-60', 'score-40', 'score-20')
+    for i in range(0, len(tresholds)):
+        if overall_score > tresholds[i]:
+            return (overall_score, class_names[i])
 
 
 def stock_scoring(fundamentals):
@@ -447,11 +452,14 @@ def return_on_investment(fundamentals, overview):
 
 def print_score(fundamentals, stock_score):
     print(52*'=')
+    print(f"{fundamentals['symbol']} - {fundamentals['name']}".center(52))
+    print(52*'=')
     print('fundament'.center(20) + ' | ' + 'value'.center(20) + ' | ' + 'score'.center(6))
     print(52*'=')
     for key in stock_score:
         print(key.rjust(20) + ' | ' + str(fundamentals[key]).rjust(20) +
               ' | ' + str((stock_score[key][0][0])).rjust(6))
+    print(52*'=')
 
 
 def candlestick(ticker):

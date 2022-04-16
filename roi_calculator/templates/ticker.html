@@ -171,6 +171,13 @@
                                         <td>&nbsp;
                                         <td>
                                     </tr>
+                                    {% if not fundamentals.dividend_value %}
+                                    <tr>
+                                        <td colspan=2 class="text-center fw-bold">{{ fundamentals.symbol }} does not pay
+                                            dividends.
+                                        </td>
+                                    </tr>
+                                    {% else %}
                                     <tr>
                                         <td>Dividend amount:</td>
                                         <td class="text-end fw-bold">
@@ -193,6 +200,7 @@
                                         <td class="text-end fw-bold">
                                             {{ fundamentals.ex_divi_date|timestamp_to_time|date:"d M Y" }}</td>
                                     </tr>
+                                    {% endif %}
                                 </tbody>
                             </table>
                         </div>
@@ -248,8 +256,8 @@
                 {% comment %} SCORING START {% endcomment %}
                 <div class="container mb-5">
                     <div class="row">
-                        <h4 class="text-center">Score:&nbsp;<span
-                                class="fw-bold">&#9632;&nbsp;{{ overall_score|2decimal_percentage_divided_by_100 }}</span>
+                        <h4 class="text-center {{ overall_score.1}}">Score:&nbsp;<span
+                                class="fw-bold">&#9632;&nbsp;{{ overall_score.0|2decimal_percentage_divided_by_100 }}</span>
                         </h4>
                     </div>
                     <hr class="drac-divider" />
@@ -264,8 +272,13 @@
                                 <tbody>
                                     <tr>
                                         <td>PE (4y median):</td>
+                                        {% if fundamentals.pe_ratio_median < 25 %}
                                         <td class="text-end fw-bold {{ score.pe_ratio_median.0.1 }}">
                                             &#9632;&nbsp;{{ fundamentals.pe_ratio_median|floatformat:2 }}</td>
+                                        {% else %}
+                                        <td class="text-end fw-bold {{ score.pe_ratio_median.0.1 }}">
+                                            &#9632;&nbsp;> 25❗</td>
+                                        {% endif %}
                                     </tr>
                                     <tr>
                                         <td>ROE (4y median):</td>
@@ -346,7 +359,8 @@
                             <div class="modal-dialog">
                                 <div class="modal-content drac-bg-black">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="overviewModalLabel">7 years overview</h5>
+                                        <h5 class="modal-title" id="overviewModalLabel">7 years overview
+                                        </h5>
                                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
