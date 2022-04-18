@@ -40,3 +40,13 @@ def ticker_view(request, ticker):
         if form.is_valid():
             ticker = form.cleaned_data['ticker'].upper().strip()
         return redirect('/ticker/' + ticker + '/')
+
+
+def temp_404(request):
+    if request.method == 'GET':
+        return render(request, '404.html')
+
+
+def temp_500(request):
+    if request.method == 'GET':
+        return render(request, '500.html')
