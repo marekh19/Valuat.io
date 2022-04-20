@@ -24,6 +24,9 @@ ADD . .
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
+RUN useradd --user-group --system --create-home --no-log-init myuser
+USER myuser
+
 # EXPOSE 8000
 # CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "StockValuation.wsgi:application"]
 
